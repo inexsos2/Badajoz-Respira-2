@@ -32,8 +32,8 @@ export const MOCK_RESOURCES: Resource[] = [
     type: 'Espacio Natural',
     address: 'Ribera del Guadiana',
     description: 'Pulmón verde de la ciudad con amplias zonas para correr y caminar.',
-    lat: 38.878,
-    lng: -6.977,
+    lat: 38.882,
+    lng: -6.979,
     tags: ['Aire Puro', 'Running', 'Familia']
   },
   {
@@ -42,9 +42,39 @@ export const MOCK_RESOURCES: Resource[] = [
     type: 'Servicio Salud',
     address: 'Calle Menacho, 12',
     description: 'Servicio farmacéutico permanente en el corazón de Badajoz.',
-    lat: 38.875,
-    lng: -6.972,
+    lat: 38.878,
+    lng: -6.970,
     tags: ['Emergencias', 'Salud']
+  },
+  {
+    id: 'r3',
+    name: 'Huerto Urbano Suerte de Saavedra',
+    type: 'Sostenibilidad',
+    address: 'Calle Antonio Hernández Gil',
+    description: 'Espacio comunitario de cultivo ecológico y aprendizaje.',
+    lat: 38.865,
+    lng: -6.955,
+    tags: ['Naturaleza', 'Comunidad']
+  },
+  {
+    id: 'r4',
+    name: 'Polideportivo La Granadilla',
+    type: 'Deporte',
+    address: 'Av. del Perú',
+    description: 'Instalaciones completas para natación, tenis y atletismo.',
+    lat: 38.868,
+    lng: -6.995,
+    tags: ['Deporte', 'Salud']
+  },
+  {
+    id: 'r5',
+    name: 'Punto Limpio El Nevero',
+    type: 'Reciclaje',
+    address: 'Polígono Ind. El Nevero',
+    description: 'Centro de recogida selectiva de residuos domésticos.',
+    lat: 38.895,
+    lng: -6.990,
+    tags: ['Sostenibilidad', 'Reciclaje']
   }
 ];
 
