@@ -316,16 +316,23 @@ const App: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-white">
       <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
       
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-full pb-24 md:pb-0">
         {renderContent()}
       </main>
 
       <footer className="py-20 border-t border-gray-100 bg-gray-50 mt-20">
         <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-4 gap-12">
           <div className="md:col-span-2 space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white font-black text-xl">B</div>
-              <span className="font-black text-2xl text-emerald-800 tracking-tight">Badajoz Respira</span>
+            <div className="group flex items-center gap-0">
+              <img 
+                src="https://image2url.com/r2/default/images/1770738689474-b034d35a-a99a-45db-a3e5-e8a9182845b8.png" 
+                alt="Logo Badajoz Respira" 
+                className="h-20 md:h-24 w-auto object-contain -mr-5 relative z-10"
+              />
+              <div className="font-black text-2xl tracking-tight flex items-center gap-1 relative z-20">
+                <span className="text-gray-900 transition-colors duration-300 group-hover:text-emerald-600">Badajoz</span>
+                <span className="text-emerald-600">Respira</span>
+              </div>
             </div>
             <p className="text-gray-400 text-sm max-w-sm leading-relaxed">Una iniciativa participativa impulsada por Farmamundi para mejorar la salud de los habitantes de Badajoz mediante la transformación del entorno urbano.</p>
             <p className="text-gray-300 text-xs pt-4 font-bold uppercase tracking-widest">© 2024 Farmamundi • Badajoz, España</p>
