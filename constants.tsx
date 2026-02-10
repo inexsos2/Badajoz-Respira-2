@@ -1,0 +1,100 @@
+
+import React from 'react';
+import { Category, AgendaEvent, Resource, BlogPost, Proposal, ProposalStatus } from './types';
+
+export const MOCK_EVENTS: AgendaEvent[] = [
+  {
+    id: '1',
+    title: 'Ruta Saludable por el Guadiana',
+    date: '2024-05-20',
+    time: '09:00',
+    location: 'Puente de Palmas',
+    description: 'Caminata guiada para conocer la flora local y mejorar la salud cardiovascular.',
+    category: Category.Deporte,
+    organizer: 'Farmamundi'
+  },
+  {
+    id: '2',
+    title: 'Taller de Yoga al Aire Libre',
+    date: '2024-05-22',
+    time: '18:30',
+    location: 'Parque de Castelar',
+    description: 'Sesión de relajación y respiración profunda en un entorno natural.',
+    category: Category.Salud,
+    organizer: 'Badajoz Respira'
+  }
+];
+
+export const MOCK_RESOURCES: Resource[] = [
+  {
+    id: 'r1',
+    name: 'Parque del Guadiana',
+    type: 'Espacio Natural',
+    address: 'Ribera del Guadiana',
+    description: 'Pulmón verde de la ciudad con amplias zonas para correr y caminar.',
+    lat: 38.878,
+    lng: -6.977,
+    tags: ['Aire Puro', 'Running', 'Familia']
+  },
+  {
+    id: 'r2',
+    name: 'Farmacia 24h Centro',
+    type: 'Servicio Salud',
+    address: 'Calle Menacho, 12',
+    description: 'Servicio farmacéutico permanente en el corazón de Badajoz.',
+    lat: 38.875,
+    lng: -6.972,
+    tags: ['Emergencias', 'Salud']
+  }
+];
+
+export const MOCK_BLOG: BlogPost[] = [
+  {
+    id: 'b1',
+    title: 'La calidad del aire en Badajoz mejora un 15%',
+    excerpt: 'Los últimos datos muestran una tendencia positiva gracias a la peatonalización...',
+    content: 'Texto completo sobre la mejora de la calidad del aire...',
+    author: 'Redacción Badajoz Respira',
+    date: '2024-05-15',
+    imageUrl: 'https://picsum.photos/seed/badajoz1/800/400',
+    category: 'Medio Ambiente'
+  },
+  {
+    id: 'b2',
+    title: 'Farmamundi lanza nueva campaña de sensibilización',
+    excerpt: 'Enfocada en el derecho a la salud en entornos urbanos.',
+    content: 'Contenido sobre la campaña...',
+    author: 'Comunicación Farmamundi',
+    date: '2024-05-10',
+    imageUrl: 'https://picsum.photos/seed/badajoz2/800/400',
+    category: 'Comunidad'
+  }
+];
+
+export const MOCK_PROPOSALS: Proposal[] = [
+  {
+    id: 'p1',
+    author: 'Ana Martínez',
+    title: 'Más fuentes de agua potable en el Casco Antiguo',
+    description: 'Es necesario instalar más puntos de hidratación para los meses de verano, especialmente para personas mayores.',
+    votes: 145,
+    status: ProposalStatus.Validated,
+    date: '2024-04-12'
+  },
+  {
+    id: 'p2',
+    author: 'Luis G.',
+    title: 'Huertos Urbanos Comunitarios',
+    description: 'Propongo usar solares abandonados para crear huertos que fomenten la alimentación saludable.',
+    votes: 89,
+    status: ProposalStatus.InReview,
+    date: '2024-04-28'
+  }
+];
+
+export const COLORS = {
+  primary: '#10b981', // Emerald 500
+  secondary: '#3b82f6', // Blue 500
+  accent: '#f59e0b', // Amber 500
+  background: '#f9fafb'
+};

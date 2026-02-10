@@ -1,0 +1,7 @@
+{
+  "name": "Copy of Badajoz Respira - Plataforma Comunitaria",
+  "description": "Una plataforma integral para el proyecto de Farmamundi en Badajoz, facilitando una agenda ciudadana, mapa de recursos saludables, blog de noticias y gestión de propuestas ciudadanas para una ciudad más saludable.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
