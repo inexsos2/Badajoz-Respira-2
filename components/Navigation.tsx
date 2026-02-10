@@ -4,9 +4,11 @@ import React from 'react';
 interface NavigationProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  onLoginClick: () => void;
+  isAdmin: boolean;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
+const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onLoginClick, isAdmin }) => {
   const navItems = [
     { id: 'inicio', label: 'Inicio' },
     { id: 'agenda', label: 'Agenda' },
@@ -17,8 +19,8 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
   return (
     <>
       {/* --- DESKTOP / TABLET HEADER (Sticky Top) --- */}
-      <nav className="sticky top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-100 z-50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-2">
+      <nav className="sticky top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-100 z-50 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3">
           <div className="flex items-center justify-between">
             {/* Logo Section */}
             <div 
@@ -36,9 +38,9 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
               </div>
             </div>
 
-            {/* Desktop Menu - Minimalist Style */}
-            <div className="hidden md:flex items-center gap-8">
-              <ul className="flex items-center gap-8">
+            {/* Desktop Menu - Integrated Proponer Button */}
+            <div className="hidden md:flex items-center gap-6">
+              <ul className="flex items-center gap-6">
                 {navItems.map((item) => (
                   <li key={item.id}>
                     <button
@@ -53,20 +55,40 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
                     </button>
                   </li>
                 ))}
+                {/* Proponer Button Integrated in Menu */}
+                <li>
+                   <button 
+                    onClick={() => setActiveTab('propuestas')}
+                    className={`px-5 py-2 rounded-full font-bold text-sm transition-all whitespace-nowrap ${
+                        activeTab === 'propuestas'
+                        ? 'bg-emerald-700 text-white'
+                        : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                    }`}
+                  >
+                    Proponer
+                  </button>
+                </li>
               </ul>
             </div>
 
-            {/* Desktop Actions */}
-            <div className="hidden md:flex items-center gap-6 shrink-0">
-               <button className="text-xs font-bold text-gray-400 hover:text-emerald-600 uppercase tracking-widest whitespace-nowrap hidden lg:block">
-                  Equipo
-               </button>
-               <button 
-                onClick={() => setActiveTab('propuestas')}
-                className="bg-gray-900 text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg shadow-gray-200 hover:shadow-emerald-200 transform hover:-translate-y-0.5 whitespace-nowrap"
-              >
-                + Proponer
-              </button>
+            {/* Admin / Team Access - Visible on all screens */}
+            <div className="flex items-center gap-4 shrink-0">
+               {isAdmin ? (
+                 <button 
+                    onClick={() => setActiveTab('admin')}
+                    className="flex items-center gap-2 text-xs font-bold text-white bg-gray-900 px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors uppercase tracking-widest"
+                 >
+                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <span className="hidden sm:inline">Panel</span> Admin
+                 </button>
+               ) : (
+                 <button 
+                    onClick={onLoginClick}
+                    className="text-xs font-bold text-gray-400 hover:text-emerald-600 uppercase tracking-widest whitespace-nowrap"
+                 >
+                    Equipo
+                 </button>
+               )}
             </div>
           </div>
         </div>
@@ -106,10 +128,10 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
             <div className="relative -top-8 mx-2">
             <button 
                 onClick={() => setActiveTab('propuestas')}
-                className={`w-14 h-14 rounded-full flex items-center justify-center shadow-xl border-4 border-white transform transition-transform active:scale-95 ${
+                className={`w-14 h-14 rounded-full flex items-center justify-center shadow-none border-4 border-white transform transition-transform active:scale-95 ${
                 activeTab === 'propuestas' 
-                    ? 'bg-gray-900 text-white' 
-                    : 'bg-emerald-500 text-white'
+                    ? 'bg-emerald-700 text-white' 
+                    : 'bg-emerald-600 text-white'
                 }`}
             >
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

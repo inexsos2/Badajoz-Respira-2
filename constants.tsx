@@ -1,6 +1,27 @@
 
 import React from 'react';
-import { Category, AgendaEvent, Resource, BlogPost, Proposal, ProposalStatus } from './types';
+import { Category, AgendaEvent, Resource, BlogPost, Proposal, ProposalStatus, User, Role } from './types';
+
+export const MOCK_USERS: User[] = [
+  {
+    id: 'u1',
+    name: 'Alejandro Inexsos',
+    email: 'alejandro@inexsos.com',
+    role: Role.Admin
+  },
+  {
+    id: 'u2',
+    name: 'María Editora',
+    email: 'maria@badajoz.es',
+    role: Role.Editor
+  },
+  {
+    id: 'u3',
+    name: 'Juan Gestión',
+    email: 'juan@farmamundi.org',
+    role: Role.Gestor
+  }
+];
 
 export const MOCK_EVENTS: AgendaEvent[] = [
   {

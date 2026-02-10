@@ -1,19 +1,51 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Proposal, ProposalStatus } from './types';
-import { MOCK_EVENTS, MOCK_RESOURCES, MOCK_BLOG, MOCK_PROPOSALS } from './constants.tsx';
+import { Proposal, ProposalStatus, AgendaEvent, Resource, BlogPost, User, Role } from './types';
+import { MOCK_EVENTS, MOCK_RESOURCES, MOCK_BLOG, MOCK_PROPOSALS, MOCK_USERS } from './constants.tsx';
 import Navigation from './components/Navigation';
 import ProposalCard from './components/ProposalCard';
 import ResourceMap from './components/ResourceMap';
+import LoginModal from './components/LoginModal';
+import AdminDashboard from './components/AdminDashboard';
 import { checkHealthyEnvironment } from './services/geminiService';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('inicio');
+  
+  // Data State
   const [proposals, setProposals] = useState<Proposal[]>(MOCK_PROPOSALS);
+  const [events, setEvents] = useState<AgendaEvent[]>(MOCK_EVENTS);
+  const [resources, setResources] = useState<Resource[]>(MOCK_RESOURCES);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(MOCK_BLOG);
+  const [users, setUsers] = useState<User[]>(MOCK_USERS);
+
+  // Chat State
   const [chatInput, setChatInput] = useState('');
   const [chatResponse, setChatResponse] = useState('');
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+
+  // Admin / Auth State
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  const isAdmin = !!currentUser;
+
+  const handleLogin = (email: string) => {
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (user) {
+      setCurrentUser(user);
+      setIsLoginModalOpen(false);
+      setActiveTab('admin');
+    } else {
+      alert('Acceso denegado: Email no encontrado.');
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setActiveTab('inicio');
+  };
 
   const handleVote = (id: string) => {
     setProposals(prev => prev.map(p => p.id === id ? { ...p, votes: p.votes + 1 } : p));
@@ -28,18 +60,35 @@ const App: React.FC = () => {
     setIsChatLoading(false);
   };
 
+  // CRUD Handlers
+  const handleUpdateEvent = (updatedEvent: AgendaEvent) => {
+    setEvents(events.map(e => e.id === updatedEvent.id ? updatedEvent : e));
+  };
+
+  const handleUpdateResource = (updatedResource: Resource) => {
+    setResources(resources.map(r => r.id === updatedResource.id ? updatedResource : r));
+  };
+
+  const handleUpdateBlogPost = (updatedPost: BlogPost) => {
+    setBlogPosts(blogPosts.map(b => b.id === updatedPost.id ? updatedPost : b));
+  };
+
+  const handleAddUser = (user: User) => setUsers([...users, user]);
+  const handleDeleteUser = (id: string) => setUsers(users.filter(u => u.id !== id));
+
+
   // Extract unique tags for the filter
   const allTags = useMemo(() => {
     const tags = new Set<string>();
-    MOCK_RESOURCES.forEach(r => r.tags.forEach(t => tags.add(t)));
+    resources.forEach(r => r.tags.forEach(t => tags.add(t)));
     return Array.from(tags).sort();
-  }, []);
+  }, [resources]);
 
   // Filter resources based on selection
   const filteredResources = useMemo(() => {
-    if (!selectedTag) return MOCK_RESOURCES;
-    return MOCK_RESOURCES.filter(r => r.tags.includes(selectedTag));
-  }, [selectedTag]);
+    if (!selectedTag) return resources;
+    return resources.filter(r => r.tags.includes(selectedTag));
+  }, [selectedTag, resources]);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -93,7 +142,7 @@ const App: React.FC = () => {
                     <span className="text-emerald-500">📰</span> Últimas Noticias
                   </h2>
                   <div className="grid sm:grid-cols-2 gap-8">
-                    {MOCK_BLOG.map(post => (
+                    {blogPosts.map(post => (
                       <div key={post.id} className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all cursor-pointer">
                         <div className="h-56 overflow-hidden">
                           <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -150,7 +199,7 @@ const App: React.FC = () => {
               <p className="text-gray-500 text-lg">Eventos gratuitos para fomentar una vida activa y saludable en Badajoz.</p>
             </header>
             <div className="grid gap-8">
-              {MOCK_EVENTS.map(event => (
+              {events.map(event => (
                 <div key={event.id} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 hover:shadow-xl transition-all border-l-8 border-l-emerald-500">
                   <div className="bg-emerald-50 rounded-2xl p-8 flex flex-col items-center justify-center min-w-[140px] text-center">
                     <span className="text-emerald-700 font-black text-4xl leading-none">{new Date(event.date).getDate()}</span>
@@ -284,7 +333,7 @@ const App: React.FC = () => {
               <p className="text-gray-500 text-xl max-w-3xl mx-auto">Información de calidad sobre salud global, medio ambiente y el proyecto Badajoz Respira.</p>
             </header>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-              {MOCK_BLOG.map(post => (
+              {blogPosts.map(post => (
                 <article key={post.id} className="bg-white rounded-[40px] overflow-hidden shadow-sm border border-gray-100 flex flex-col hover:shadow-2xl transition-all group">
                   <div className="relative h-64 overflow-hidden">
                     <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -307,6 +356,29 @@ const App: React.FC = () => {
           </div>
         );
 
+      case 'admin':
+         return (
+            <AdminDashboard 
+                currentUser={currentUser}
+                onLogout={handleLogout}
+                events={events}
+                resources={resources}
+                blogPosts={blogPosts}
+                users={users}
+                onAddEvent={(e) => setEvents([...events, e])}
+                onUpdateEvent={handleUpdateEvent}
+                onDeleteEvent={(id) => setEvents(events.filter(e => e.id !== id))}
+                onAddResource={(r) => setResources([...resources, r])}
+                onUpdateResource={handleUpdateResource}
+                onDeleteResource={(id) => setResources(resources.filter(r => r.id !== id))}
+                onAddBlogPost={(b) => setBlogPosts([...blogPosts, b])}
+                onUpdateBlogPost={handleUpdateBlogPost}
+                onDeleteBlogPost={(id) => setBlogPosts(blogPosts.filter(b => b.id !== id))}
+                onAddUser={handleAddUser}
+                onDeleteUser={handleDeleteUser}
+            />
+         );
+
       default:
         return null;
     }
@@ -314,7 +386,12 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navigation 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        onLoginClick={() => setIsLoginModalOpen(true)}
+        isAdmin={isAdmin}
+      />
       
       <main className="flex-1 w-full pb-24 md:pb-0">
         {renderContent()}
@@ -357,6 +434,13 @@ const App: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {/* Auth Modal */}
+      <LoginModal 
+        isOpen={isLoginModalOpen} 
+        onClose={() => setIsLoginModalOpen(false)} 
+        onLogin={handleLogin} 
+      />
     </div>
   );
 };

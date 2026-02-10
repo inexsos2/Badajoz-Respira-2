@@ -14,6 +14,19 @@ export enum ProposalStatus {
   InReview = 'En Revisión'
 }
 
+export enum Role {
+  Admin = 'Admin',
+  Editor = 'Editor',
+  Gestor = 'Gestor'
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+}
+
 export interface AgendaEvent {
   id: string;
   title: string;
@@ -36,6 +49,12 @@ export interface Resource {
   tags: string[];
 }
 
+export interface Attachment {
+  name: string;
+  url: string;
+  type: 'image' | 'file';
+}
+
 export interface BlogPost {
   id: string;
   title: string;
@@ -45,6 +64,7 @@ export interface BlogPost {
   date: string;
   imageUrl: string;
   category: string;
+  attachments?: Attachment[];
 }
 
 export interface Proposal {
