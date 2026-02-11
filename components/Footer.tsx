@@ -80,13 +80,13 @@ const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
         </div>
 
         {/* Logos Financiación e Implementación */}
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 items-center md:items-start">
             
             {/* Implementa */}
             <div className="flex flex-col items-center md:items-start gap-4">
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">IMPLEMENTA</span>
                 <img 
-                    src="https://farmamundi.org/wp-content/uploads/2020/03/Logo-FARMAMUNDI-blanco.png" 
+                    src="https://activando-ods.saludglocal.org/wp-content/themes/saludglocal/assets/images/farmamundi-footer-color.png" 
                     alt="Farmamundi" 
                     className="h-10 md:h-12 opacity-80 hover:opacity-100 transition-opacity"
                 />
@@ -96,11 +96,10 @@ const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
             <div className="flex flex-col items-center md:items-start gap-4">
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">FINANCIA</span>
                 <div className="flex gap-4">
-                    {/* Placeholder for Gobierno de España Logo - using a styled div to simulate if image not perfect */}
                     <img 
-                        src="https://www.aecid.es/r/58155986-e820-4138-8a8b-c99738f6d655/13.1_Logo_Cooperacion_Espanola_Blanco.png"
-                        alt="Cooperación Española" 
-                        className="h-12 object-contain opacity-90"
+                        src="https://activando-ods.saludglocal.org/wp-content/uploads/sites/34/2023/07/2560px-Logotipo_del_Ministerio_de_Derechos_Sociales_y_Agenda_2030.svg-2048x549-1-300x80.png"
+                        alt="Ministerio de Derechos Sociales y Agenda 2030" 
+                        className="h-10 md:h-12 object-contain bg-white rounded px-2 py-1"
                     />
                 </div>
             </div>
