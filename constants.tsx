@@ -104,21 +104,28 @@ export const MOCK_BLOG: BlogPost[] = [
     id: 'b1',
     title: 'La calidad del aire en Badajoz mejora un 15%',
     excerpt: 'Los últimos datos muestran una tendencia positiva gracias a la peatonalización...',
-    content: 'Texto completo sobre la mejora de la calidad del aire...',
     author: 'Redacción Badajoz Respira',
     date: '2024-05-15',
     imageUrl: 'https://picsum.photos/seed/badajoz1/800/400',
-    category: 'Medio Ambiente'
+    category: 'Medio Ambiente',
+    tags: ['Aire', 'Salud', 'Urbanismo'],
+    blocks: [
+        { id: '1', type: 'header', content: 'Resultados del estudio anual' },
+        { id: '2', type: 'paragraph', content: 'Gracias a las nuevas medidas de peatonalización en el centro histórico, los niveles de NO2 han descendido significativamente.' }
+    ]
   },
   {
     id: 'b2',
     title: 'Farmamundi lanza nueva campaña de sensibilización',
     excerpt: 'Enfocada en el derecho a la salud en entornos urbanos.',
-    content: 'Contenido sobre la campaña...',
     author: 'Comunicación Farmamundi',
     date: '2024-05-10',
     imageUrl: 'https://picsum.photos/seed/badajoz2/800/400',
-    category: 'Comunidad'
+    category: 'Comunidad',
+    tags: ['ONG', 'Campaña', 'Derechos'],
+    blocks: [
+        { id: '1', type: 'paragraph', content: 'Farmamundi inicia hoy su campaña para promover hábitos saludables en entornos urbanos.' }
+    ]
   }
 ];
 

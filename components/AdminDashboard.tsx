@@ -1,6 +1,6 @@
 
-import React, { useState, useRef } from 'react';
-import { AgendaEvent, Resource, BlogPost, Category, User, Role, Attachment } from '../types';
+import React, { useState, useRef, useEffect } from 'react';
+import { AgendaEvent, Resource, BlogPost, Category, User, Role, ContentBlock, BlockType, BlockSettings } from '../types';
 
 interface AdminDashboardProps {
   currentUser: User | null;
@@ -35,13 +35,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Forms State
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const [postForm, setPostForm] = useState<Partial<BlogPost>>({ category: 'General', attachments: [] });
+  // Initialize post form with default values (Header + Paragraph)
+  const defaultBlocks: ContentBlock[] = [
+    { id: 'def-1', type: 'header', content: '', settings: { textAlign: 'left' } },
+    { id: 'def-2', type: 'paragraph', content: '', settings: { textAlign: 'left' } }
+  ];
+
+  const [postForm, setPostForm] = useState<Partial<BlogPost>>({ 
+      category: 'General', 
+      tags: [], 
+      blocks: defaultBlocks,
+      date: new Date().toISOString().split('T')[0] 
+  });
+  
   const [eventForm, setEventForm] = useState<Partial<AgendaEvent>>({ category: Category.Salud });
   const [resourceForm, setResourceForm] = useState<Partial<Resource>>({ type: 'General' });
   const [userForm, setUserForm] = useState<Partial<User>>({ role: Role.Editor });
-
-  // Refs for Editor
-  const contentTextAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [tagInput, setTagInput] = useState('');
 
   // -- Handlers for Edit Setup --
   const handleEditPost = (post: BlogPost) => {
@@ -61,77 +71,131 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const cancelEdit = () => {
     setEditingId(null);
-    setPostForm({ category: 'General', attachments: [] });
+    setPostForm({ 
+        category: 'General', 
+        tags: [], 
+        blocks: [
+          { id: Date.now().toString() + '1', type: 'header', content: '', settings: { textAlign: 'left' } },
+          { id: Date.now().toString() + '2', type: 'paragraph', content: '', settings: { textAlign: 'left' } }
+        ], 
+        date: new Date().toISOString().split('T')[0] 
+    });
     setEventForm({ category: Category.Salud });
     setResourceForm({ type: 'General' });
+    setTagInput('');
   };
 
-  // -- Editor Logic (Markdown insertion) --
-  const insertText = (before: string, after: string = '') => {
-    const textarea = contentTextAreaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const previousValue = textarea.value;
-    const selectedText = previousValue.substring(start, end);
-
-    const newValue = previousValue.substring(0, start) + before + selectedText + after + previousValue.substring(end);
-    
-    setPostForm({ ...postForm, content: newValue });
-    
-    // Restore focus and cursor
-    setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start + before.length, end + before.length);
-    }, 0);
+  // -- Block Editor Logic --
+  const addBlock = (type: BlockType) => {
+    const newBlock: ContentBlock = {
+        id: Date.now().toString(),
+        type,
+        content: '',
+        settings: {
+          textAlign: 'left',
+          width: type === 'image' ? '100%' : undefined
+        }
+    };
+    setPostForm(prev => ({ ...prev, blocks: [...(prev.blocks || []), newBlock] }));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const objectUrl = URL.createObjectURL(file);
-      const type = file.type.startsWith('image/') ? 'image' : 'file';
-      
-      const newAttachment: Attachment = {
-        name: file.name,
-        url: objectUrl,
-        type: type
-      };
-
-      setPostForm(prev => ({
+  const updateBlock = (id: string, content: string) => {
+    setPostForm(prev => ({
         ...prev,
-        attachments: [...(prev.attachments || []), newAttachment]
-      }));
+        blocks: prev.blocks?.map(b => b.id === id ? { ...b, content } : b)
+    }));
+  };
 
-      // If it's the first image and no main image is set, set it as main
-      if (type === 'image' && !postForm.imageUrl) {
-        setPostForm(prev => ({ ...prev, imageUrl: objectUrl }));
-      }
+  const updateBlockSettings = (id: string, newSettings: Partial<BlockSettings>) => {
+    setPostForm(prev => ({
+        ...prev,
+        blocks: prev.blocks?.map(b => b.id === id ? { ...b, settings: { ...b.settings, ...newSettings } } : b)
+    }));
+  };
+
+  const handleBlockImageUpload = (id: string, file: File) => {
+    const url = URL.createObjectURL(file);
+    setPostForm(prev => ({
+        ...prev,
+        blocks: prev.blocks?.map(b => b.id === id ? { ...b, content: url, file } : b)
+    }));
+  };
+
+  const moveBlock = (index: number, direction: 'up' | 'down') => {
+    if (!postForm.blocks) return;
+    const newBlocks = [...postForm.blocks];
+    if (direction === 'up' && index > 0) {
+        [newBlocks[index], newBlocks[index - 1]] = [newBlocks[index - 1], newBlocks[index]];
+    } else if (direction === 'down' && index < newBlocks.length - 1) {
+        [newBlocks[index], newBlocks[index + 1]] = [newBlocks[index + 1], newBlocks[index]];
+    }
+    setPostForm(prev => ({ ...prev, blocks: newBlocks }));
+  };
+
+  const deleteBlock = (index: number) => {
+    setPostForm(prev => ({
+        ...prev,
+        blocks: prev.blocks?.filter((_, i) => i !== index)
+    }));
+  };
+
+  // -- WYSIWYG Formatting Logic --
+  // Using document.execCommand for simple rich text editing without external libraries
+  const applyFormat = (command: string, value: string | undefined = undefined) => {
+    document.execCommand(command, false, value);
+    // Focus back to editor is handled by the user click, but execCommand works on current selection
+  };
+
+  // -- Tag Logic --
+  const handleAddTag = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && tagInput.trim()) {
+        e.preventDefault();
+        if (!postForm.tags?.includes(tagInput.trim())) {
+            setPostForm(prev => ({ ...prev, tags: [...(prev.tags || []), tagInput.trim()] }));
+        }
+        setTagInput('');
     }
   };
 
-  const removeAttachment = (index: number) => {
-    setPostForm(prev => ({
-      ...prev,
-      attachments: prev.attachments?.filter((_, i) => i !== index)
-    }));
+  const removeTag = (tagToRemove: string) => {
+    setPostForm(prev => ({ ...prev, tags: prev.tags?.filter(t => t !== tagToRemove) }));
+  };
+
+  // -- Cover Image Logic --
+  const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        const url = URL.createObjectURL(file);
+        setPostForm(prev => ({ ...prev, imageUrl: url }));
+    }
   };
 
   // -- Submit Handlers --
   const handleSubmitPost = (e: React.FormEvent) => {
     e.preventDefault();
-    if (postForm.title && postForm.excerpt) {
+    if (postForm.title) {
+      // Auto-generate excerpt if empty from first paragraph block
+      let finalExcerpt = postForm.excerpt;
+      if (!finalExcerpt && postForm.blocks) {
+          // We need to strip HTML for the excerpt
+          const firstPara = postForm.blocks.find(b => b.type === 'paragraph');
+          if (firstPara) {
+              const tempDiv = document.createElement('div');
+              tempDiv.innerHTML = firstPara.content;
+              finalExcerpt = (tempDiv.textContent || tempDiv.innerText || '').substring(0, 100) + '...';
+          }
+      }
+
       const postData: BlogPost = {
           id: editingId || Date.now().toString(),
           title: postForm.title || '',
-          excerpt: postForm.excerpt || '',
-          content: postForm.content || '',
+          excerpt: finalExcerpt || '',
           author: postForm.author || currentUser?.name || 'Admin',
           date: postForm.date || new Date().toISOString().split('T')[0],
           imageUrl: postForm.imageUrl || 'https://picsum.photos/800/400',
           category: postForm.category || 'General',
-          attachments: postForm.attachments || []
+          tags: postForm.tags || [],
+          blocks: postForm.blocks || []
       };
 
       if (editingId) {
@@ -198,6 +262,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
+  // Helper to determine dynamic classes for quote block based on alignment
+  const getQuoteClasses = (align?: string) => {
+    const base = "italic text-xl font-light text-emerald-700 bg-emerald-50/20";
+    switch (align) {
+        case 'right':
+            return `${base} border-r-4 border-emerald-500 pr-4 py-2`;
+        case 'center':
+            return `${base} border-t-2 border-b-2 border-emerald-500 px-4 py-4`;
+        case 'left':
+        default:
+            return `${base} border-l-4 border-emerald-500 pl-4 py-2`;
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 animate-fadeIn">
       <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
@@ -236,7 +314,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Form Column */}
         <div className="lg:col-span-1">
-            <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 sticky top-24">
+            <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 sticky top-24 max-h-[90vh] overflow-y-auto">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="font-black text-xl">
                         {editingId ? '✏️ Editando' : '➕ Crear Nuevo'}
@@ -247,90 +325,239 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
 
                 {activeSection === 'articulos' && (
-                    <form onSubmit={handleSubmitPost} className="space-y-4">
-                        {/* Title & Category */}
-                        <div className="space-y-3">
+                    <form onSubmit={handleSubmitPost} className="space-y-6">
+                        
+                        {/* Meta Data */}
+                        <div className="space-y-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Configuración General</label>
+                            
                             <input 
-                                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none font-bold text-gray-800" 
-                                placeholder="Título del Artículo" 
+                                className="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm font-bold text-gray-800 focus:outline-emerald-500" 
+                                placeholder="Título Principal" 
                                 value={postForm.title || ''} 
                                 onChange={e => setPostForm({...postForm, title: e.target.value})} 
                             />
-                             <div className="flex gap-2">
+
+                            <div className="grid grid-cols-2 gap-2">
                                 <input 
-                                    className="w-1/2 bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs" 
-                                    placeholder="Categoría (Ej: Salud)" 
+                                    className="w-full bg-white border border-gray-200 rounded-xl p-3 text-xs" 
+                                    placeholder="Categoría" 
                                     value={postForm.category || ''} 
                                     onChange={e => setPostForm({...postForm, category: e.target.value})} 
                                 />
                                 <input 
-                                    className="w-1/2 bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs" 
-                                    placeholder="URL Imagen Portada" 
-                                    value={postForm.imageUrl || ''} 
-                                    onChange={e => setPostForm({...postForm, imageUrl: e.target.value})} 
+                                    type="date"
+                                    className="w-full bg-white border border-gray-200 rounded-xl p-3 text-xs" 
+                                    value={postForm.date || ''} 
+                                    onChange={e => setPostForm({...postForm, date: e.target.value})} 
                                 />
-                             </div>
-                             <textarea 
-                                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs resize-none" 
-                                placeholder="Breve extracto para la tarjeta..." 
-                                rows={2} 
-                                value={postForm.excerpt || ''} 
-                                onChange={e => setPostForm({...postForm, excerpt: e.target.value})} 
-                            />
-                        </div>
-
-                        {/* Rich Text Toolbar */}
-                        <div className="border border-gray-200 rounded-xl overflow-hidden">
-                            <div className="bg-gray-100 p-2 flex gap-1 border-b border-gray-200 overflow-x-auto">
-                                <button type="button" onClick={() => insertText('**', '**')} className="p-1.5 hover:bg-gray-200 rounded font-bold text-gray-700 min-w-[28px]" title="Negrita">B</button>
-                                <button type="button" onClick={() => insertText('*', '*')} className="p-1.5 hover:bg-gray-200 rounded italic text-gray-700 min-w-[28px]" title="Cursiva">I</button>
-                                <div className="w-px bg-gray-300 mx-1"></div>
-                                <button type="button" onClick={() => insertText('## ')} className="p-1.5 hover:bg-gray-200 rounded text-gray-700 text-xs font-bold" title="Título 2">H2</button>
-                                <button type="button" onClick={() => insertText('### ')} className="p-1.5 hover:bg-gray-200 rounded text-gray-700 text-xs font-bold" title="Título 3">H3</button>
-                                <div className="w-px bg-gray-300 mx-1"></div>
-                                <button type="button" onClick={() => insertText('- ')} className="p-1.5 hover:bg-gray-200 rounded text-gray-700" title="Lista">List</button>
-                                <button type="button" onClick={() => insertText('[', '](url)')} className="p-1.5 hover:bg-gray-200 rounded text-gray-700 text-xs" title="Enlace">Link</button>
                             </div>
-                            <textarea 
-                                ref={contentTextAreaRef}
-                                className="w-full bg-white p-3 text-sm h-40 focus:outline-none font-mono text-gray-700"
-                                placeholder="Escribe aquí el contenido del artículo (soporta Markdown)..." 
-                                value={postForm.content || ''} 
-                                onChange={e => setPostForm({...postForm, content: e.target.value})} 
-                            />
+
+                             {/* Cover Image Upload */}
+                             <div className="relative group w-full h-32 border-2 border-dashed border-gray-300 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center cursor-pointer hover:border-emerald-400 transition-colors">
+                                <input type="file" onChange={handleCoverImageUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                                {postForm.imageUrl ? (
+                                    <img src={postForm.imageUrl} className="w-full h-full object-cover" alt="Cover" />
+                                ) : (
+                                    <div className="text-center text-gray-400">
+                                        <span className="text-2xl block">📷</span>
+                                        <span className="text-xs font-medium">Arrastra una portada aquí</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
-                        {/* File Attachments */}
-                        <div className="border border-dashed border-gray-300 rounded-xl p-4 text-center bg-gray-50">
-                             <input type="file" id="fileUpload" className="hidden" onChange={handleFileUpload} />
-                             <label htmlFor="fileUpload" className="cursor-pointer flex flex-col items-center gap-2">
-                                <span className="text-2xl text-gray-400">📎</span>
-                                <span className="text-xs text-gray-500 font-medium">Click para adjuntar imágenes o archivos</span>
-                             </label>
+                        {/* Tags */}
+                        <div>
+                             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Etiquetas</label>
+                             <div className="flex flex-wrap gap-2 mb-2">
+                                {postForm.tags?.map(tag => (
+                                    <span key={tag} className="bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded-lg flex items-center gap-1">
+                                        #{tag}
+                                        <button type="button" onClick={() => removeTag(tag)} className="hover:text-emerald-900 font-bold">×</button>
+                                    </span>
+                                ))}
+                             </div>
+                             <input 
+                                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs" 
+                                placeholder="Escribe etiqueta y pulsa Enter..." 
+                                value={tagInput}
+                                onChange={e => setTagInput(e.target.value)}
+                                onKeyDown={handleAddTag}
+                             />
+                        </div>
 
-                             {postForm.attachments && postForm.attachments.length > 0 && (
-                                <div className="grid grid-cols-2 gap-2 mt-4 text-left">
-                                    {postForm.attachments.map((file, idx) => (
-                                        <div key={idx} className="relative group bg-white p-2 rounded-lg border border-gray-200 flex items-center gap-2 shadow-sm">
-                                            {file.type === 'image' ? (
-                                                <img src={file.url} className="w-8 h-8 object-cover rounded" alt="preview" />
-                                            ) : (
-                                                <span className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center text-xs">📄</span>
-                                            )}
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-[10px] truncate font-medium text-gray-700">{file.name}</p>
+                        <hr className="border-gray-100" />
+
+                        {/* Block Editor */}
+                        <div>
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Contenido (Bloques)</label>
+                                <div className="flex gap-1 flex-wrap">
+                                    <button type="button" onClick={() => addBlock('paragraph')} className="text-[10px] bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded border border-gray-200 transition-colors">Párrafo</button>
+                                    <button type="button" onClick={() => addBlock('header')} className="text-[10px] bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded border border-gray-200 transition-colors">Encabezado</button>
+                                    <button type="button" onClick={() => addBlock('quote')} className="text-[10px] bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-2 py-1 rounded border border-emerald-200 transition-colors">Cita Destacada</button>
+                                    <button type="button" onClick={() => addBlock('image')} className="text-[10px] bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded border border-gray-200 transition-colors">Imagen</button>
+                                </div>
+                            </div>
+
+                            <div className="space-y-6 min-h-[100px]">
+                                {postForm.blocks?.map((block, index) => (
+                                    <div key={block.id} className="relative group bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                                        
+                                        {/* Unified Header & Toolbar */}
+                                        <div className="bg-gray-50 border-b border-gray-100 px-3 py-2 flex justify-between items-center">
+                                            <div className="flex items-center gap-3 overflow-x-auto no-scrollbar w-full">
+                                                <div className="flex items-center gap-1 shrink-0">
+                                                    {/* Move Buttons */}
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <button type="button" onClick={() => moveBlock(index, 'up')} className="text-[8px] leading-none hover:text-emerald-600">▲</button>
+                                                        <button type="button" onClick={() => moveBlock(index, 'down')} className="text-[8px] leading-none hover:text-emerald-600">▼</button>
+                                                    </div>
+                                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                                        {block.type === 'header' ? 'Encabezado' : block.type === 'image' ? 'Imagen' : block.type === 'quote' ? 'Cita' : 'Párrafo'}
+                                                    </span>
+                                                </div>
+
+                                                <div className="w-px h-4 bg-gray-300 mx-1 shrink-0"></div>
+
+                                                {/* INLINE TOOLBAR FOR RICH TEXT (Paragraph & Quote) */}
+                                                {(block.type === 'paragraph' || block.type === 'quote') && (
+                                                    <div className="flex items-center gap-1 shrink-0">
+                                                        {/* Basic Formatting - using MouseDown preventDefault to keep focus on editable area */}
+                                                        <button type="button" onMouseDown={(e) => {e.preventDefault(); applyFormat('bold');}} className="w-6 h-6 hover:bg-white hover:shadow-sm rounded text-xs font-bold text-gray-600" title="Negrita">B</button>
+                                                        <button type="button" onMouseDown={(e) => {e.preventDefault(); applyFormat('italic');}} className="w-6 h-6 hover:bg-white hover:shadow-sm rounded text-xs italic text-gray-600" title="Cursiva">I</button>
+                                                        <button type="button" onMouseDown={(e) => {e.preventDefault(); applyFormat('underline');}} className="w-6 h-6 hover:bg-white hover:shadow-sm rounded text-xs underline text-gray-600" title="Subrayado">U</button>
+                                                        
+                                                        <div className="w-px h-3 bg-gray-200 mx-1 shrink-0"></div>
+                                                        
+                                                        {/* Font Size */}
+                                                        <button type="button" onMouseDown={(e) => {e.preventDefault(); applyFormat('fontSize', '5');}} className="w-6 h-6 hover:bg-white hover:shadow-sm rounded text-[10px] font-bold text-gray-600" title="Aumentar Letra">A+</button>
+                                                        <button type="button" onMouseDown={(e) => {e.preventDefault(); applyFormat('fontSize', '2');}} className="w-6 h-6 hover:bg-white hover:shadow-sm rounded text-[9px] text-gray-600" title="Disminuir Letra">A-</button>
+                                                        
+                                                        <div className="w-px h-3 bg-gray-200 mx-1 shrink-0"></div>
+
+                                                        {/* Lists */}
+                                                        <button type="button" onMouseDown={(e) => {e.preventDefault(); applyFormat('insertUnorderedList');}} className="w-6 h-6 hover:bg-white hover:shadow-sm rounded text-xs text-gray-600 flex items-center justify-center" title="Viñetas">
+                                                           •
+                                                        </button>
+                                                        <button type="button" onMouseDown={(e) => {e.preventDefault(); applyFormat('insertOrderedList');}} className="w-6 h-6 hover:bg-white hover:shadow-sm rounded text-xs text-gray-600 flex items-center justify-center" title="Numeración">
+                                                           1.
+                                                        </button>
+
+                                                        <div className="w-px h-3 bg-gray-200 mx-1 shrink-0"></div>
+
+                                                        {/* Alignment */}
+                                                        <button type="button" onMouseDown={(e) => {e.preventDefault(); applyFormat('justifyLeft'); updateBlockSettings(block.id, { textAlign: 'left' });}} className={`w-6 h-6 hover:bg-white hover:shadow-sm rounded text-xs ${block.settings?.textAlign === 'left' ? 'text-blue-500 bg-white shadow-sm' : 'text-gray-400'}`}>⇤</button>
+                                                        <button type="button" onMouseDown={(e) => {e.preventDefault(); applyFormat('justifyCenter'); updateBlockSettings(block.id, { textAlign: 'center' });}} className={`w-6 h-6 hover:bg-white hover:shadow-sm rounded text-xs ${block.settings?.textAlign === 'center' ? 'text-blue-500 bg-white shadow-sm' : 'text-gray-400'}`}>⇹</button>
+                                                        <button type="button" onMouseDown={(e) => {e.preventDefault(); applyFormat('justifyRight'); updateBlockSettings(block.id, { textAlign: 'right' });}} className={`w-6 h-6 hover:bg-white hover:shadow-sm rounded text-xs ${block.settings?.textAlign === 'right' ? 'text-blue-500 bg-white shadow-sm' : 'text-gray-400'}`}>⇥</button>
+                                                    </div>
+                                                )}
+
+                                                {/* INLINE TOOLBAR FOR IMAGE */}
+                                                {block.type === 'image' && (
+                                                    <div className="flex items-center gap-1 shrink-0">
+                                                        {(['25%', '50%', '75%', '100%'] as const).map(w => (
+                                                            <button 
+                                                                key={w}
+                                                                type="button" 
+                                                                onClick={() => updateBlockSettings(block.id, { width: w })}
+                                                                className={`text-[8px] px-1 rounded ${block.settings?.width === w ? 'bg-blue-500 text-white' : 'text-gray-400 hover:bg-white hover:text-gray-700'}`}
+                                                            >
+                                                                {w}
+                                                            </button>
+                                                        ))}
+                                                        <div className="w-px h-3 bg-gray-200 mx-1 shrink-0"></div>
+                                                        <button type="button" onClick={() => updateBlockSettings(block.id, { textAlign: 'left' })} className={`text-xs ${block.settings?.textAlign === 'left' ? 'text-blue-500' : 'text-gray-400'}`}>⇤</button>
+                                                        <button type="button" onClick={() => updateBlockSettings(block.id, { textAlign: 'center' })} className={`text-xs ${block.settings?.textAlign === 'center' ? 'text-blue-500' : 'text-gray-400'}`}>⇹</button>
+                                                        <button type="button" onClick={() => updateBlockSettings(block.id, { textAlign: 'right' })} className={`text-xs ${block.settings?.textAlign === 'right' ? 'text-blue-500' : 'text-gray-400'}`}>⇥</button>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <button 
-                                                type="button" 
-                                                onClick={() => removeAttachment(idx)}
-                                                className="text-red-400 hover:text-red-600 px-1"
-                                            >
-                                                ×
+
+                                            {/* Delete Button */}
+                                            <button type="button" onClick={() => deleteBlock(index)} className="text-gray-400 hover:text-red-500 transition-colors ml-2 shrink-0">
+                                                ✕
                                             </button>
                                         </div>
-                                    ))}
-                                </div>
-                             )}
+
+                                        {/* Block Content Render */}
+                                        <div className="p-3">
+                                            {block.type === 'header' && (
+                                                <input 
+                                                    className="w-full font-black text-xl text-gray-900 border-none focus:ring-0 p-0 placeholder-gray-300 bg-transparent"
+                                                    placeholder="Escribe el subtítulo aquí..."
+                                                    value={block.content}
+                                                    onChange={(e) => updateBlock(block.id, e.target.value)}
+                                                />
+                                            )}
+                                            
+                                            {(block.type === 'paragraph' || block.type === 'quote') && (
+                                                <div 
+                                                    className={`w-full min-h-[80px] focus:outline-none text-gray-900 prose prose-sm max-w-none 
+                                                        ${block.type === 'quote' ? getQuoteClasses(block.settings?.textAlign) : 'text-sm'}`}
+                                                    contentEditable
+                                                    suppressContentEditableWarning
+                                                    onBlur={(e) => updateBlock(block.id, e.currentTarget.innerHTML)}
+                                                    dangerouslySetInnerHTML={{ __html: block.content }}
+                                                    style={{ textAlign: block.settings?.textAlign }}
+                                                />
+                                            )}
+
+                                            {block.type === 'image' && (
+                                                <div className="w-full">
+                                                    {block.content ? (
+                                                        <div className="relative border border-gray-100 rounded-lg p-2 bg-gray-50/50">
+                                                            <div className={`flex w-full ${block.settings?.textAlign === 'center' ? 'justify-center' : block.settings?.textAlign === 'right' ? 'justify-end' : 'justify-start'}`}>
+                                                                <img 
+                                                                    src={block.content} 
+                                                                    className="object-cover rounded shadow-sm transition-all duration-300" 
+                                                                    style={{ width: block.settings?.width || '100%', maxHeight: '300px' }}
+                                                                />
+                                                            </div>
+                                                            <button 
+                                                                type="button" 
+                                                                onClick={() => updateBlock(block.id, '')} 
+                                                                className="absolute top-2 right-2 bg-white/90 text-red-500 p-1 rounded-full shadow hover:bg-red-50 transition-colors"
+                                                                title="Eliminar imagen"
+                                                            >
+                                                                ✕
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors relative">
+                                                                <input 
+                                                                    type="file" 
+                                                                    id={`img-${block.id}`}
+                                                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                                                    onChange={(e) => e.target.files && e.target.files[0] && handleBlockImageUpload(block.id, e.target.files[0])}
+                                                                />
+                                                                <span className="text-2xl block mb-1">📂</span>
+                                                                <span className="text-xs text-gray-500 font-bold">Subir Archivo</span>
+                                                            </div>
+                                                            <div className="border border-gray-200 rounded-lg p-4 flex flex-col justify-center gap-2">
+                                                                <span className="text-xs font-bold text-gray-400">O pegar URL:</span>
+                                                                <input 
+                                                                    type="text"
+                                                                    className="w-full bg-gray-50 border border-gray-200 rounded p-2 text-xs"
+                                                                    placeholder="https://..."
+                                                                    onBlur={(e) => { if(e.target.value) updateBlock(block.id, e.target.value) }}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                                {postForm.blocks?.length === 0 && (
+                                    <div className="text-center py-8 text-gray-400 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
+                                        Añade bloques para empezar a escribir
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         <button className={`w-full text-white font-bold py-3 rounded-xl transition-colors shadow-lg ${editingId ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-200' : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200'}`}>
@@ -397,14 +624,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <img src={post.imageUrl} className="w-16 h-16 rounded-lg object-cover bg-gray-100" />
                         <div>
                             <h4 className="font-bold text-gray-900">{post.title}</h4>
-                            <p className="text-xs text-gray-400 mt-1">{post.date} • {post.author}</p>
-                            {post.attachments && post.attachments.length > 0 && (
-                                <div className="flex gap-1 mt-2">
-                                    {post.attachments.map((att, i) => (
-                                        <span key={i} className="text-[9px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">📎 {att.name}</span>
-                                    ))}
-                                </div>
-                            )}
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs text-gray-400">{post.date}</span>
+                                {post.tags?.map(t => (
+                                    <span key={t} className="text-[9px] bg-gray-100 text-gray-500 px-1.5 rounded">#{t}</span>
+                                ))}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-2 line-clamp-1">{post.excerpt}</p>
                         </div>
                     </div>
                     <div className="flex gap-2">

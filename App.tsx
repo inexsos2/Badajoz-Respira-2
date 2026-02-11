@@ -28,6 +28,9 @@ const App: React.FC = () => {
   // Admin / Auth State
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  
+  // View State
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
 
   const isAdmin = !!currentUser;
 
@@ -90,6 +93,12 @@ const App: React.FC = () => {
     return resources.filter(r => r.tags.includes(selectedTag));
   }, [selectedTag, resources]);
 
+  // Render Post View Logic
+  const handlePostClick = (post: BlogPost) => {
+      setSelectedPost(post);
+      window.scrollTo(0, 0);
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'inicio':
@@ -143,14 +152,18 @@ const App: React.FC = () => {
                   </h2>
                   <div className="grid sm:grid-cols-2 gap-8">
                     {blogPosts.map(post => (
-                      <div key={post.id} className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all cursor-pointer">
+                      <div 
+                        key={post.id} 
+                        onClick={() => { setActiveTab('blog'); handlePostClick(post); }}
+                        className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all cursor-pointer"
+                      >
                         <div className="h-56 overflow-hidden">
                           <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                         </div>
                         <div className="p-8 space-y-3">
                           <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">{post.category}</span>
                           <h3 className="font-bold text-xl leading-tight group-hover:text-emerald-600 transition-colors">{post.title}</h3>
-                          <p className="text-gray-500 text-sm leading-relaxed">{post.excerpt}</p>
+                          <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{post.excerpt}</p>
                         </div>
                       </div>
                     ))}
@@ -326,6 +339,111 @@ const App: React.FC = () => {
         );
 
       case 'blog':
+        if (selectedPost) {
+            return (
+                <div className="max-w-4xl mx-auto px-4 py-12 animate-fadeIn">
+                    <button 
+                        onClick={() => setSelectedPost(null)} 
+                        className="mb-8 flex items-center gap-2 text-gray-500 hover:text-emerald-600 font-bold text-sm transition-colors"
+                    >
+                        ← Volver a Noticias
+                    </button>
+                    
+                    <article className="space-y-8">
+                        {/* Article Header */}
+                        <div className="text-center space-y-6">
+                            <span className="inline-block bg-emerald-100 text-emerald-800 text-xs font-black px-4 py-1 rounded-full uppercase tracking-widest">
+                                {selectedPost.category}
+                            </span>
+                            <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight">
+                                {selectedPost.title}
+                            </h1>
+                            <div className="flex items-center justify-center gap-4 text-sm text-gray-500 font-medium">
+                                <span>Por {selectedPost.author}</span>
+                                <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span>{selectedPost.date}</span>
+                            </div>
+                        </div>
+
+                        {/* Cover Image */}
+                        <div className="rounded-[40px] overflow-hidden shadow-2xl aspect-video relative">
+                            <img 
+                                src={selectedPost.imageUrl} 
+                                alt={selectedPost.title} 
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+
+                        {/* Content Blocks */}
+                        <div className="prose prose-lg prose-emerald mx-auto max-w-3xl space-y-8 text-gray-700 leading-relaxed pt-8">
+                            {selectedPost.blocks?.map(block => {
+                                if (block.type === 'header') {
+                                    return <h2 key={block.id} className="text-3xl font-bold text-gray-900 mt-12 mb-6">{block.content}</h2>;
+                                }
+                                if (block.type === 'paragraph') {
+                                    return (
+                                        <div 
+                                            key={block.id} 
+                                            dangerouslySetInnerHTML={{__html: block.content}}
+                                            style={{ textAlign: block.settings?.textAlign || 'left' }}
+                                            className="mb-6 prose-p:my-2 prose-ul:my-2 prose-li:my-1"
+                                        />
+                                    );
+                                }
+                                if (block.type === 'quote') {
+                                    const align = block.settings?.textAlign || 'left';
+                                    let quoteClasses = "my-8 italic text-2xl font-light text-emerald-800 leading-relaxed bg-emerald-50/30 ";
+
+                                    if (align === 'right') {
+                                        quoteClasses += "border-r-4 border-emerald-500 pr-6 py-4 text-right";
+                                    } else if (align === 'center') {
+                                        quoteClasses += "border-t-2 border-b-2 border-emerald-500 py-6 px-6 text-center";
+                                    } else {
+                                        quoteClasses += "border-l-4 border-emerald-500 pl-6 py-4 text-left";
+                                    }
+
+                                    return (
+                                        <blockquote 
+                                            key={block.id}
+                                            className={quoteClasses}
+                                            dangerouslySetInnerHTML={{__html: block.content}}
+                                        />
+                                    );
+                                }
+                                if (block.type === 'image' && block.content) {
+                                    return (
+                                        <figure key={block.id} className={`flex ${block.settings?.textAlign === 'center' ? 'justify-center' : block.settings?.textAlign === 'right' ? 'justify-end' : 'justify-start'}`}>
+                                            <img 
+                                                src={block.content} 
+                                                alt="Content" 
+                                                className="rounded-2xl shadow-lg my-8" 
+                                                style={{ width: block.settings?.width || '100%' }}
+                                            />
+                                        </figure>
+                                    );
+                                }
+                                return null;
+                            })}
+                        </div>
+                        
+                        {/* Tags Footer */}
+                        {selectedPost.tags && (
+                             <div className="border-t border-gray-100 pt-8 mt-12">
+                                <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Temas Relacionados</h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {selectedPost.tags.map(tag => (
+                                        <span key={tag} className="bg-gray-100 hover:bg-emerald-50 text-gray-600 hover:text-emerald-700 px-4 py-2 rounded-full text-sm font-bold transition-colors cursor-default">
+                                            #{tag}
+                                        </span>
+                                    ))}
+                                </div>
+                             </div>
+                        )}
+                    </article>
+                </div>
+            );
+        }
+
         return (
           <div className="max-w-6xl mx-auto px-4 py-12 space-y-16 animate-fadeIn">
             <header className="space-y-4 text-center">
@@ -334,7 +452,11 @@ const App: React.FC = () => {
             </header>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
               {blogPosts.map(post => (
-                <article key={post.id} className="bg-white rounded-[40px] overflow-hidden shadow-sm border border-gray-100 flex flex-col hover:shadow-2xl transition-all group">
+                <article 
+                    key={post.id} 
+                    onClick={() => handlePostClick(post)}
+                    className="bg-white rounded-[40px] overflow-hidden shadow-sm border border-gray-100 flex flex-col hover:shadow-2xl transition-all group cursor-pointer"
+                >
                   <div className="relative h-64 overflow-hidden">
                     <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute top-6 left-6 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-[0.2em] shadow-lg">{post.category}</div>
@@ -388,7 +510,7 @@ const App: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-white">
       <Navigation 
         activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        setActiveTab={(tab) => { setActiveTab(tab); if(tab !== 'blog') setSelectedPost(null); }} 
         onLoginClick={() => setIsLoginModalOpen(true)}
         isAdmin={isAdmin}
       />

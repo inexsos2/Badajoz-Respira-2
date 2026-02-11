@@ -55,16 +55,33 @@ export interface Attachment {
   type: 'image' | 'file';
 }
 
+export type BlockType = 'paragraph' | 'header' | 'image' | 'quote';
+
+export interface BlockSettings {
+  textAlign?: 'left' | 'center' | 'right' | 'justify';
+  width?: '25%' | '50%' | '75%' | '100%';
+  caption?: string;
+}
+
+export interface ContentBlock {
+  id: string;
+  type: BlockType;
+  content: string; // Text content or Image URL
+  file?: File; // For new uploads
+  settings?: BlockSettings;
+}
+
 export interface BlogPost {
   id: string;
   title: string;
   excerpt: string;
-  content: string;
   author: string;
   date: string;
-  imageUrl: string;
+  imageUrl: string; // Cover image URL
   category: string;
-  attachments?: Attachment[];
+  tags: string[];
+  blocks: ContentBlock[]; // Structured content
+  attachments?: Attachment[]; // Legacy or sidebar attachments
 }
 
 export interface Proposal {
