@@ -97,9 +97,9 @@ const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">FINANCIA</span>
                 <div className="flex gap-4">
                     <img 
-                        src="https://activando-ods.saludglocal.org/wp-content/uploads/sites/34/2023/07/2560px-Logotipo_del_Ministerio_de_Derechos_Sociales_y_Agenda_2030.svg-2048x549-1-300x80.png"
+                        src="https://image2url.com/r2/default/images/1770817371811-71e50b79-b3d1-47b3-b066-9202c137bcd9.jpeg"
                         alt="Ministerio de Derechos Sociales y Agenda 2030" 
-                        className="h-10 md:h-12 object-contain bg-white rounded px-2 py-1"
+                        className="h-10 md:h-12 w-auto object-contain rounded-sm bg-white pr-4"
                     />
                 </div>
             </div>
