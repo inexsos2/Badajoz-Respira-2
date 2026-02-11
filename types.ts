@@ -31,22 +31,31 @@ export interface AgendaEvent {
   id: string;
   title: string;
   date: string;
-  time: string;
+  startTime: string; 
+  endTime?: string;  
   location: string;
   description: string;
   category: Category;
   organizer: string;
+  email?: string;    
+  phone?: string;    
+  image?: File | string; 
+  lat?: number;      
+  lng?: number;      
 }
 
 export interface Resource {
   id: string;
   name: string;
-  type: string;
+  category: Category; 
   address: string;
   description: string;
   lat: number;
   lng: number;
   tags: string[];
+  email?: string;    
+  phone?: string;    
+  image?: File | string; 
 }
 
 export interface Attachment {
@@ -60,6 +69,7 @@ export type BlockType = 'paragraph' | 'header' | 'image' | 'quote';
 export interface BlockSettings {
   textAlign?: 'left' | 'center' | 'right' | 'justify';
   width?: '25%' | '50%' | '75%' | '100%';
+  filter?: 'none' | 'grayscale' | 'sepia' | 'blur'; // Added image filters
   caption?: string;
 }
 
@@ -84,8 +94,11 @@ export interface BlogPost {
   attachments?: Attachment[]; // Legacy or sidebar attachments
 }
 
+export type ProposalType = 'general' | 'event' | 'resource';
+
 export interface Proposal {
   id: string;
+  type: ProposalType;
   author: string;
   title: string;
   description: string;
@@ -93,4 +106,5 @@ export interface Proposal {
   status: ProposalStatus;
   date: string;
   aiSummary?: string;
+  details?: any; // Stores the JSON data for the Event or Resource form
 }

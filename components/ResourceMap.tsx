@@ -57,12 +57,12 @@ const ResourceMap: React.FC<ResourceMapProps> = ({ resources }) => {
     // Add new markers
     resources.forEach(resource => {
       const marker = L.marker([resource.lat, resource.lng], {
-        icon: createCustomIcon(resource.type)
+        icon: createCustomIcon(resource.category)
       }).addTo(map);
 
       const popupContent = `
         <div class="p-1 font-sans">
-            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block mb-1">${resource.type}</span>
+            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block mb-1">${resource.category}</span>
             <h3 class="font-bold text-base text-gray-900 leading-tight mb-1">${resource.name}</h3>
             <p class="text-xs text-gray-500 mb-2">${resource.address}</p>
             <p class="text-sm text-gray-700 mb-3">${resource.description}</p>
