@@ -251,7 +251,7 @@ const App: React.FC = () => {
                  <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all flex flex-col">
                     <div className="h-64 overflow-hidden relative bg-blue-50">
                          {/* Imagen de bocadillos de diálogo (Diálogos) */}
-                         <img src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?q=80&w=800&auto=format&fit=crop" alt="Diálogo" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                         <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800&auto=format&fit=crop" alt="Diálogos y participación" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
                     </div>
                     <div className="p-10 flex-1 flex items-center justify-center">
                         <p className="text-gray-600 text-lg leading-relaxed text-center">

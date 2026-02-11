@@ -32,14 +32,16 @@ const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
           
           {/* Columna 1: Logo y Descripción */}
           <div className="md:col-span-5 space-y-6">
-            <div className="flex items-center gap-2 mb-6">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    <path d="M12 8v4" />
-                    <path d="M12 16h.01" />
-                </svg>
-                <div className="flex flex-col">
-                    <span className="font-bold text-2xl tracking-tight text-white">Badajoz <span className="text-emerald-500">Respira</span></span>
+            <div className="flex items-center gap-0 mb-6 -ml-4">
+                <img 
+                    src="https://image2url.com/r2/default/images/1770738689474-b034d35a-a99a-45db-a3e5-e8a9182845b8.png" 
+                    alt="Logo Badajoz Respira" 
+                    className="h-16 w-auto object-contain relative z-10 brightness-0 invert"
+                />
+                <div className="flex flex-col relative z-20">
+                    <span className="font-bold text-2xl tracking-tight text-white flex items-center gap-1">
+                        Badajoz <span className="text-emerald-500">Respira</span>
+                    </span>
                 </div>
             </div>
             <p className="text-gray-400 leading-relaxed text-sm max-w-md">
