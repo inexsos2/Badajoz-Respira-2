@@ -1,0 +1,112 @@
+
+import React from 'react';
+
+interface FooterProps {
+  setActiveTab: (tab: string) => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
+  return (
+    <footer className="w-full">
+      {/* Sección Mantente al día (CTA Blog) */}
+      <div className="bg-emerald-50 py-16 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="space-y-4 max-w-2xl text-center md:text-left">
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900">Mantente al día</h2>
+            <p className="text-gray-600 text-lg leading-relaxed">
+              Lee las últimas noticias sobre el proyecto, artículos sobre salud urbana y novedades de Farmamundi.
+            </p>
+          </div>
+          <button 
+            onClick={() => setActiveTab('blog')}
+            className="border-2 border-emerald-600 text-emerald-700 font-bold px-10 py-4 rounded-full hover:bg-emerald-600 hover:text-white transition-all transform hover:scale-105 whitespace-nowrap bg-white shadow-sm"
+          >
+            Visitar el Blog
+          </button>
+        </div>
+      </div>
+
+      {/* Sección Principal Oscura */}
+      <div className="bg-[#0f172a] text-white pt-20 pb-10 px-6">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-12 gap-12 mb-20 border-b border-gray-800 pb-16">
+          
+          {/* Columna 1: Logo y Descripción */}
+          <div className="md:col-span-5 space-y-6">
+            <div className="flex items-center gap-2 mb-6">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <path d="M12 8v4" />
+                    <path d="M12 16h.01" />
+                </svg>
+                <div className="flex flex-col">
+                    <span className="font-bold text-2xl tracking-tight text-white">Badajoz <span className="text-emerald-500">Respira</span></span>
+                </div>
+            </div>
+            <p className="text-gray-400 leading-relaxed text-sm max-w-md">
+              Un proyecto de Farmamundi para transformar Badajoz en una ciudad más resiliente, saludable y conectada socialmente.
+            </p>
+          </div>
+
+          {/* Columna 2: Proyecto */}
+          <div className="md:col-span-3">
+            <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-8">PROYECTO</h3>
+            <ul className="space-y-4 text-gray-400 text-sm font-medium">
+              <li><a href="#" className="hover:text-emerald-400 transition-colors">Sobre Farmamundi</a></li>
+              <li><a href="#" className="hover:text-emerald-400 transition-colors">Nuestros Objetivos</a></li>
+              <li><a href="#" onClick={() => setActiveTab('propuestas')} className="hover:text-emerald-400 transition-colors">Cómo Participar</a></li>
+            </ul>
+          </div>
+
+          {/* Columna 3: Contacto */}
+          <div className="md:col-span-4">
+            <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-8">CONTACTO</h3>
+            <ul className="space-y-6 text-gray-400 text-sm">
+              <li className="flex items-start gap-4">
+                <span className="text-red-500 text-lg">📍</span>
+                <span>Calle Padre Tomás, 2. 06011 Badajoz</span>
+              </li>
+              <li className="flex items-start gap-4">
+                <span className="text-blue-400 text-lg">✉️</span>
+                <span>extremadura@farmamundi.org</span>
+              </li>
+              <li className="flex items-start gap-4">
+                <span className="text-emerald-500 text-lg">📞</span>
+                <span>924 207 591</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Logos Financiación e Implementación */}
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            
+            {/* Implementa */}
+            <div className="flex flex-col items-center md:items-start gap-4">
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">IMPLEMENTA</span>
+                <img 
+                    src="https://farmamundi.org/wp-content/uploads/2020/03/Logo-FARMAMUNDI-blanco.png" 
+                    alt="Farmamundi" 
+                    className="h-10 md:h-12 opacity-80 hover:opacity-100 transition-opacity"
+                />
+            </div>
+
+            {/* Financia */}
+            <div className="flex flex-col items-center md:items-start gap-4">
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">FINANCIA</span>
+                <div className="flex gap-4">
+                    {/* Placeholder for Gobierno de España Logo - using a styled div to simulate if image not perfect */}
+                    <img 
+                        src="https://www.aecid.es/r/58155986-e820-4138-8a8b-c99738f6d655/13.1_Logo_Cooperacion_Espanola_Blanco.png"
+                        alt="Cooperación Española" 
+                        className="h-12 object-contain opacity-90"
+                    />
+                </div>
+            </div>
+
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;

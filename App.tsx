@@ -7,6 +7,7 @@ import ProposalCard from './components/ProposalCard';
 import ResourceMap from './components/ResourceMap';
 import LoginModal from './components/LoginModal';
 import AdminDashboard from './components/AdminDashboard';
+import Footer from './components/Footer';
 import { checkHealthyEnvironment } from './services/geminiService';
 
 const App: React.FC = () => {
@@ -67,14 +68,20 @@ const App: React.FC = () => {
   const handleUpdateEvent = (updatedEvent: AgendaEvent) => {
     setEvents(events.map(e => e.id === updatedEvent.id ? updatedEvent : e));
   };
+  const handleAddEvent = (event: AgendaEvent) => setEvents([...events, event]);
+  const handleDeleteEvent = (id: string) => setEvents(events.filter(e => e.id !== id));
 
   const handleUpdateResource = (updatedResource: Resource) => {
     setResources(resources.map(r => r.id === updatedResource.id ? updatedResource : r));
   };
+  const handleAddResource = (resource: Resource) => setResources([...resources, resource]);
+  const handleDeleteResource = (id: string) => setResources(resources.filter(r => r.id !== id));
 
   const handleUpdateBlogPost = (updatedPost: BlogPost) => {
     setBlogPosts(blogPosts.map(b => b.id === updatedPost.id ? updatedPost : b));
   };
+  const handleAddBlogPost = (post: BlogPost) => setBlogPosts([...blogPosts, post]);
+  const handleDeleteBlogPost = (id: string) => setBlogPosts(blogPosts.filter(b => b.id !== id));
 
   const handleAddUser = (user: User) => setUsers([...users, user]);
   const handleDeleteUser = (id: string) => setUsers(users.filter(u => u.id !== id));
@@ -100,8 +107,7 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
-    switch (activeTab) {
-      case 'inicio':
+    if (activeTab === 'inicio') {
         return (
           <div className="animate-fadeIn -mx-4 md:-mx-0">
             {/* Portada / Hero Section matching the image */}
@@ -209,8 +215,68 @@ const App: React.FC = () => {
               </div>
             </section>
 
+            {/* Nueva Sección: Objetivos */}
+            <section className="max-w-6xl mx-auto px-6 pb-20">
+              <div className="text-center mb-16 space-y-4">
+                 <h2 className="text-4xl font-black text-gray-900">¿Qué objetivos perseguimos?</h2>
+                 <div className="w-16 h-1.5 bg-emerald-500 mx-auto rounded-full"></div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                 {/* Objetivo 1 */}
+                 <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all flex flex-col">
+                    <div className="h-64 overflow-hidden relative">
+                         <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=800&auto=format&fit=crop" alt="Comunidad" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                    </div>
+                    <div className="p-10 flex-1 flex items-center justify-center">
+                        <p className="text-gray-600 text-lg leading-relaxed text-center">
+                            Identificar y <span className="font-bold text-emerald-600">vincular iniciativas locales</span> que impulsen la promoción de la salud comunitaria y activen el uso de nuestros espacios verdes.
+                        </p>
+                    </div>
+                 </div>
+
+                 {/* Objetivo 2 */}
+                 <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all flex flex-col">
+                    <div className="h-64 overflow-hidden relative">
+                         <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=800&auto=format&fit=crop" alt="Naturaleza" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                    </div>
+                    <div className="p-10 flex-1 flex items-center justify-center">
+                        <p className="text-gray-600 text-lg leading-relaxed text-center">
+                            Impulsar actividades de <span className="font-bold text-emerald-600">educación ambiental y salud</span> que involucren a la población en el cuidado y disfrute de la naturaleza urbana.
+                        </p>
+                    </div>
+                 </div>
+
+                 {/* Objetivo 3 */}
+                 <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all flex flex-col">
+                    <div className="h-64 overflow-hidden relative bg-blue-50">
+                         {/* Imagen de bocadillos de diálogo (Diálogos) */}
+                         <img src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?q=80&w=800&auto=format&fit=crop" alt="Diálogo" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                    </div>
+                    <div className="p-10 flex-1 flex items-center justify-center">
+                        <p className="text-gray-600 text-lg leading-relaxed text-center">
+                            Generar <span className="font-bold text-emerald-600">diálogos comunitarios</span> para encontrar soluciones colectivas a necesidades de salud y mejorar nuestros entornos naturales.
+                        </p>
+                    </div>
+                 </div>
+
+                 {/* Objetivo 4 */}
+                 <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all flex flex-col">
+                    <div className="h-64 overflow-hidden relative">
+                         {/* Imagen de manos unidas (Participación/Campaña) */}
+                         <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800&auto=format&fit=crop" alt="Participación" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                    </div>
+                    <div className="p-10 flex-1 flex items-center justify-center">
+                        <p className="text-gray-600 text-lg leading-relaxed text-center">
+                            Desarrollar <span className="font-bold text-emerald-600">campañas de comunicación</span> que promuevan estilos de vida saludables y la participación intergeneracional activa.
+                        </p>
+                    </div>
+                 </div>
+              </div>
+            </section>
+
             {/* Additional content below hero */}
-            <div className="max-w-6xl mx-auto px-4 space-y-20">
+            <div className="max-w-6xl mx-auto px-4 space-y-20 pb-20">
               <div className="grid md:grid-cols-3 gap-12">
                 <div className="md:col-span-2 space-y-10">
                   <h2 className="text-3xl font-bold flex items-center gap-3">
@@ -269,365 +335,198 @@ const App: React.FC = () => {
             </div>
           </div>
         );
+    }
 
-      case 'agenda':
-        return (
-          <div className="max-w-6xl mx-auto px-4 py-12 space-y-12 animate-fadeIn">
-            <header className="text-center max-w-3xl mx-auto space-y-4">
-              <h1 className="text-5xl font-black text-gray-900 tracking-tight">Agenda Ciudadana</h1>
-              <p className="text-gray-500 text-lg">Eventos gratuitos para fomentar una vida activa y saludable en Badajoz.</p>
-            </header>
-            <div className="grid gap-8">
-              {events.map(event => (
-                <div key={event.id} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 hover:shadow-xl transition-all border-l-8 border-l-emerald-500">
-                  <div className="bg-emerald-50 rounded-2xl p-8 flex flex-col items-center justify-center min-w-[140px] text-center">
-                    <span className="text-emerald-700 font-black text-4xl leading-none">{new Date(event.date).getDate()}</span>
-                    <span className="text-emerald-600 uppercase text-xs font-bold tracking-widest mt-1">{new Date(event.date).toLocaleDateString('es-ES', { month: 'short' })}</span>
-                  </div>
-                  <div className="flex-1 space-y-4">
-                    <div className="flex items-center gap-3 text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">
-                      <span>{event.category}</span>
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-200"></span>
-                      <span>{event.time}</span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900">{event.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{event.description}</p>
-                    <div className="flex flex-wrap items-center gap-6 pt-2">
-                      <span className="text-sm text-gray-400 flex items-center gap-2">📍 <span className="font-medium text-gray-600">{event.location}</span></span>
-                      <span className="text-sm text-gray-400 flex items-center gap-2">👤 <span className="font-medium text-gray-600">{event.organizer}</span></span>
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    <button className="w-full md:w-auto bg-gray-900 text-white px-8 py-3 rounded-2xl font-bold hover:bg-emerald-600 transition-all shadow-lg shadow-black/5">Apuntarse</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-
-      case 'mapa':
-        return (
-          <div className="max-w-6xl mx-auto px-4 py-12 space-y-12 animate-fadeIn h-full">
-            <header className="flex flex-col md:flex-row justify-between items-end gap-6">
-              <div className="space-y-2">
-                <h1 className="text-5xl font-black text-gray-900 tracking-tight">Mapa de Salud</h1>
-                <p className="text-gray-500 text-lg">Localiza parques, puntos de reciclaje, farmacias y más en Badajoz.</p>
-              </div>
-              <div className="flex gap-2 bg-white p-2 rounded-2xl shadow-sm border border-gray-100 overflow-x-auto max-w-full">
-                <button 
-                  onClick={() => setSelectedTag(null)}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
-                    selectedTag === null 
-                      ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' 
-                      : 'text-gray-500 hover:bg-gray-50'
-                  }`}
-                >
-                  Todos
-                </button>
-                {allTags.map(tag => (
-                  <button 
-                    key={tag}
-                    onClick={() => setSelectedTag(tag)}
-                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
-                      selectedTag === tag 
-                        ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' 
-                        : 'text-gray-500 hover:bg-gray-50'
-                    }`}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </header>
-            <div className="grid lg:grid-cols-4 gap-8 h-[700px]">
-              <div className="lg:col-span-1 bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-y-auto p-6 space-y-6">
-                <h3 className="font-black text-gray-900 uppercase text-xs tracking-[0.2em] mb-4 text-center lg:text-left">Listado de Recursos</h3>
-                {filteredResources.map(res => (
-                  <div key={res.id} className="p-6 rounded-3xl bg-gray-50 hover:bg-emerald-50 border border-transparent hover:border-emerald-100 transition-all cursor-pointer group">
-                    <h4 className="font-bold text-gray-900 text-lg group-hover:text-emerald-700 transition-colors leading-tight">{res.name}</h4>
-                    <p className="text-[10px] text-gray-400 mt-2 font-bold uppercase tracking-widest">{res.type}</p>
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {res.tags.map(tag => (
-                        <span key={tag} className="bg-white text-[9px] px-2 py-1 rounded-full text-gray-500 border border-gray-100 font-bold uppercase tracking-wider">{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-                {filteredResources.length === 0 && (
-                   <div className="text-center py-10 text-gray-400">
-                      No se encontraron recursos con este filtro.
-                   </div>
-                )}
-              </div>
-              <div className="lg:col-span-3 bg-white rounded-[40px] overflow-hidden border-8 border-white shadow-2xl relative">
-                <ResourceMap resources={filteredResources} />
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'propuestas':
-        return (
-          <div className="max-w-6xl mx-auto px-4 py-12 space-y-16 animate-fadeIn">
-             <header className="flex flex-col md:flex-row justify-between items-center gap-10">
-              <div className="space-y-4 text-center md:text-left">
-                <h1 className="text-5xl font-black text-gray-900 tracking-tight">Validación Ciudadana</h1>
-                <p className="text-gray-500 text-xl max-w-2xl">Comparte y apoya ideas para transformar Badajoz en una ciudad más verde y humana.</p>
-              </div>
-              <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-12 py-5 rounded-[25px] font-black text-lg shadow-2xl shadow-emerald-200 transition-all transform hover:-translate-y-1 active:scale-95">
-                + Nueva Propuesta
-              </button>
-            </header>
-
-            <div className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm space-y-10">
-              <div className="flex items-center gap-10 text-xs font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50 pb-6 overflow-x-auto no-scrollbar">
-                <button className="text-emerald-600 border-b-2 border-emerald-600 pb-1 whitespace-nowrap">Más Votadas</button>
-                <button className="hover:text-gray-900 transition-colors whitespace-nowrap">Recientes</button>
-                <button className="hover:text-gray-900 transition-colors whitespace-nowrap">Ya Validadas</button>
-              </div>
-              <div className="grid md:grid-cols-2 gap-10">
-                {proposals.map(p => (
-                  <ProposalCard key={p.id} proposal={p} onVote={handleVote} />
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-gray-900 rounded-[40px] p-12 text-white flex flex-col md:flex-row items-center gap-12 shadow-2xl relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
-               <div className="text-7xl drop-shadow-lg relative z-10">💡</div>
-               <div className="space-y-4 relative z-10">
-                 <h3 className="text-3xl font-black tracking-tight">¿Cómo funciona la validación?</h3>
-                 <p className="text-gray-400 text-lg leading-relaxed max-w-3xl">Las propuestas que alcanzan un consenso comunitario son analizadas por expertos. Priorizamos la salud urbana, la sostenibilidad y el impacto positivo en el bienestar social de Badajoz.</p>
-               </div>
-            </div>
-          </div>
-        );
-
-      case 'blog':
-        if (selectedPost) {
-            return (
-                <div className="max-w-4xl mx-auto px-4 py-12 animate-fadeIn">
-                    <button 
-                        onClick={() => setSelectedPost(null)} 
-                        className="mb-8 flex items-center gap-2 text-gray-500 hover:text-emerald-600 font-bold text-sm transition-colors"
-                    >
-                        ← Volver a Noticias
-                    </button>
-                    
-                    <article className="space-y-8">
-                        {/* Article Header */}
-                        <div className="text-center space-y-6">
-                            <span className="inline-block bg-emerald-100 text-emerald-800 text-xs font-black px-4 py-1 rounded-full uppercase tracking-widest">
-                                {selectedPost.category}
-                            </span>
-                            <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight">
-                                {selectedPost.title}
-                            </h1>
-                            <div className="flex items-center justify-center gap-4 text-sm text-gray-500 font-medium">
-                                <span>Por {selectedPost.author}</span>
-                                <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                                <span>{selectedPost.date}</span>
-                            </div>
-                        </div>
-
-                        {/* Cover Image */}
-                        <div className="rounded-[40px] overflow-hidden shadow-2xl aspect-video relative">
-                            <img 
-                                src={selectedPost.imageUrl} 
-                                alt={selectedPost.title} 
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-
-                        {/* Content Blocks */}
-                        <div className="prose prose-lg prose-emerald mx-auto max-w-3xl space-y-8 text-gray-700 leading-relaxed pt-8">
-                            {selectedPost.blocks?.map(block => {
-                                if (block.type === 'header') {
-                                    return <h2 key={block.id} className="text-3xl font-bold text-gray-900 mt-12 mb-6">{block.content}</h2>;
-                                }
-                                if (block.type === 'paragraph') {
-                                    return (
-                                        <div 
-                                            key={block.id} 
-                                            dangerouslySetInnerHTML={{__html: block.content}}
-                                            style={{ textAlign: block.settings?.textAlign || 'left' }}
-                                            className="mb-6 prose-p:my-2 prose-ul:my-2 prose-li:my-1"
-                                        />
-                                    );
-                                }
-                                if (block.type === 'quote') {
-                                    const align = block.settings?.textAlign || 'left';
-                                    let quoteClasses = "my-8 italic text-2xl font-light text-emerald-800 leading-relaxed bg-emerald-50/30 ";
-
-                                    if (align === 'right') {
-                                        quoteClasses += "border-r-4 border-emerald-500 pr-6 py-4 text-right";
-                                    } else if (align === 'center') {
-                                        quoteClasses += "border-t-2 border-b-2 border-emerald-500 py-6 px-6 text-center";
-                                    } else {
-                                        quoteClasses += "border-l-4 border-emerald-500 pl-6 py-4 text-left";
-                                    }
-
-                                    return (
-                                        <blockquote 
-                                            key={block.id}
-                                            className={quoteClasses}
-                                            dangerouslySetInnerHTML={{__html: block.content}}
-                                        />
-                                    );
-                                }
-                                if (block.type === 'image' && block.content) {
-                                    return (
-                                        <figure key={block.id} className={`flex ${block.settings?.textAlign === 'center' ? 'justify-center' : block.settings?.textAlign === 'right' ? 'justify-end' : 'justify-start'}`}>
-                                            <img 
-                                                src={block.content} 
-                                                alt="Content" 
-                                                className="rounded-2xl shadow-lg my-8" 
-                                                style={{ width: block.settings?.width || '100%' }}
-                                            />
-                                        </figure>
-                                    );
-                                }
-                                return null;
-                            })}
-                        </div>
-                        
-                        {/* Tags Footer */}
-                        {selectedPost.tags && (
-                             <div className="border-t border-gray-100 pt-8 mt-12">
-                                <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Temas Relacionados</h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {selectedPost.tags.map(tag => (
-                                        <span key={tag} className="bg-gray-100 hover:bg-emerald-50 text-gray-600 hover:text-emerald-700 px-4 py-2 rounded-full text-sm font-bold transition-colors cursor-default">
-                                            #{tag}
-                                        </span>
-                                    ))}
-                                </div>
-                             </div>
-                        )}
-                    </article>
-                </div>
-            );
-        }
-
-        return (
-          <div className="max-w-6xl mx-auto px-4 py-12 space-y-16 animate-fadeIn">
-            <header className="space-y-4 text-center">
-              <h1 className="text-5xl font-black text-gray-900 tracking-tight">Noticias y Blog</h1>
-              <p className="text-gray-500 text-xl max-w-3xl mx-auto">Información de calidad sobre salud global, medio ambiente y el proyecto Badajoz Respira.</p>
-            </header>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-              {blogPosts.map(post => (
-                <article 
-                    key={post.id} 
-                    onClick={() => handlePostClick(post)}
-                    className="bg-white rounded-[40px] overflow-hidden shadow-sm border border-gray-100 flex flex-col hover:shadow-2xl transition-all group cursor-pointer"
-                >
-                  <div className="relative h-64 overflow-hidden">
-                    <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute top-6 left-6 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-[0.2em] shadow-lg">{post.category}</div>
-                  </div>
-                  <div className="p-8 flex-1 flex flex-col gap-4">
-                    <div className="flex items-center justify-between text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                      <span>{post.author}</span>
-                      <span>{post.date}</span>
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900 leading-tight group-hover:text-emerald-600 transition-colors">{post.title}</h2>
-                    <p className="text-gray-500 text-sm line-clamp-3 leading-relaxed">{post.excerpt}</p>
-                    <button className="mt-auto pt-6 text-emerald-600 font-black text-sm hover:translate-x-2 transition-transform flex items-center gap-2 group-hover:text-emerald-700">
-                      Continuar leyendo <span className="text-xl">→</span>
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        );
-
-      case 'admin':
+    if (activeTab === 'admin') {
+         if (!currentUser) {
+             setActiveTab('inicio');
+             return null; 
+         }
          return (
-            <AdminDashboard 
+             <AdminDashboard 
                 currentUser={currentUser}
                 onLogout={handleLogout}
                 events={events}
                 resources={resources}
                 blogPosts={blogPosts}
                 users={users}
-                onAddEvent={(e) => setEvents([...events, e])}
+                onAddEvent={handleAddEvent}
                 onUpdateEvent={handleUpdateEvent}
-                onDeleteEvent={(id) => setEvents(events.filter(e => e.id !== id))}
-                onAddResource={(r) => setResources([...resources, r])}
+                onDeleteEvent={handleDeleteEvent}
+                onAddResource={handleAddResource}
                 onUpdateResource={handleUpdateResource}
-                onDeleteResource={(id) => setResources(resources.filter(r => r.id !== id))}
-                onAddBlogPost={(b) => setBlogPosts([...blogPosts, b])}
+                onDeleteResource={handleDeleteResource}
+                onAddBlogPost={handleAddBlogPost}
                 onUpdateBlogPost={handleUpdateBlogPost}
-                onDeleteBlogPost={(id) => setBlogPosts(blogPosts.filter(b => b.id !== id))}
+                onDeleteBlogPost={handleDeleteBlogPost}
                 onAddUser={handleAddUser}
                 onDeleteUser={handleDeleteUser}
-            />
+             />
          );
-
-      default:
-        return null;
     }
+
+    if (activeTab === 'agenda') {
+        return (
+            <div className="max-w-6xl mx-auto px-4 py-10 animate-fadeIn">
+                 <h2 className="text-3xl font-black text-gray-900 mb-8 flex items-center gap-3">
+                    <span className="text-emerald-500">📅</span> Agenda Saludable
+                 </h2>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    {events.map(event => (
+                        <div key={event.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase">{event.category}</div>
+                                <div className="text-right">
+                                    <span className="block text-2xl font-black text-gray-900 leading-none">{event.date.split('-')[2]}</span>
+                                    <span className="block text-xs text-gray-500 uppercase font-bold">Mayo</span>
+                                </div>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">{event.title}</h3>
+                            <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                                <span>📍 {event.location}</span>
+                                <span>⏰ {event.time}</span>
+                            </div>
+                            <p className="text-gray-600 text-sm mb-4">{event.description}</p>
+                            <div className="text-xs text-emerald-600 font-bold">Organiza: {event.organizer}</div>
+                        </div>
+                    ))}
+                 </div>
+            </div>
+        );
+    }
+
+    if (activeTab === 'mapa') {
+        return (
+            <div className="max-w-7xl mx-auto px-4 py-6 h-[calc(100vh-100px)] flex flex-col animate-fadeIn">
+                <div className="flex justify-between items-center mb-4">
+                     <h2 className="text-2xl font-black text-gray-900">Mapa de Recursos</h2>
+                     <select 
+                        className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm"
+                        value={selectedTag || ''}
+                        onChange={(e) => setSelectedTag(e.target.value || null)}
+                     >
+                        <option value="">Todos los recursos</option>
+                        {allTags.map(tag => (
+                            <option key={tag} value={tag}>{tag}</option>
+                        ))}
+                     </select>
+                </div>
+                <div className="flex-1 rounded-3xl overflow-hidden border border-gray-200 shadow-lg">
+                    <ResourceMap resources={filteredResources} />
+                </div>
+            </div>
+        );
+    }
+
+    if (activeTab === 'blog') {
+        if (selectedPost) {
+            return (
+                <div className="max-w-4xl mx-auto px-4 py-10 animate-fadeIn">
+                    <button onClick={() => setSelectedPost(null)} className="text-emerald-600 font-bold text-sm mb-6 flex items-center gap-1 hover:underline">
+                        ← Volver al blog
+                    </button>
+                    <img src={selectedPost.imageUrl} alt={selectedPost.title} className="w-full h-80 object-cover rounded-3xl mb-8 shadow-lg" />
+                    <div className="flex items-center gap-3 mb-4">
+                        <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded-full uppercase">{selectedPost.category}</span>
+                        <span className="text-gray-400 text-sm">{selectedPost.date}</span>
+                    </div>
+                    <h1 className="text-4xl font-black text-gray-900 mb-6">{selectedPost.title}</h1>
+                    <div className="prose prose-lg prose-emerald max-w-none text-gray-600">
+                        {selectedPost.blocks.map(block => {
+                            if (block.type === 'header') return <h2 key={block.id} className="font-bold text-2xl text-gray-900 mt-8 mb-4">{block.content}</h2>;
+                            if (block.type === 'image') return <img key={block.id} src={block.content} alt="" className="w-full rounded-xl my-6" style={{ width: block.settings?.width || '100%' }} />;
+                            if (block.type === 'quote') return <blockquote key={block.id} className="border-l-4 border-emerald-500 pl-4 italic text-xl text-emerald-800 my-6 bg-emerald-50 p-4 rounded-r-lg" dangerouslySetInnerHTML={{ __html: block.content }} />;
+                            return <div key={block.id} dangerouslySetInnerHTML={{ __html: block.content }} className="mb-4" />;
+                        })}
+                    </div>
+                </div>
+            );
+        }
+        return (
+            <div className="max-w-6xl mx-auto px-4 py-10 animate-fadeIn">
+                <h2 className="text-3xl font-black text-gray-900 mb-8 flex items-center gap-3">
+                    <span className="text-emerald-500">📰</span> Blog y Noticias
+                </h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {blogPosts.map(post => (
+                      <div 
+                        key={post.id} 
+                        onClick={() => handlePostClick(post)}
+                        className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all cursor-pointer flex flex-col"
+                      >
+                        <div className="h-48 overflow-hidden">
+                          <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div className="p-6 flex-1 flex flex-col">
+                          <div className="mb-2 flex items-center justify-between">
+                              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">{post.category}</span>
+                              <span className="text-xs text-gray-400">{post.date}</span>
+                          </div>
+                          <h3 className="font-bold text-lg leading-tight group-hover:text-emerald-600 transition-colors mb-2">{post.title}</h3>
+                          <p className="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4 flex-1">{post.excerpt}</p>
+                          <div className="flex items-center gap-2 mt-auto">
+                              {post.tags.slice(0, 3).map(tag => (
+                                  <span key={tag} className="text-[9px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">#{tag}</span>
+                              ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    if (activeTab === 'propuestas') {
+        return (
+            <div className="max-w-4xl mx-auto px-4 py-10 animate-fadeIn">
+                 <div className="text-center mb-10">
+                    <h2 className="text-3xl font-black text-gray-900 mb-2">Participación Ciudadana</h2>
+                    <p className="text-gray-500">Propón ideas para mejorar Badajoz y vota las de tus vecinos.</p>
+                 </div>
+                 
+                 <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl mb-10 flex items-center justify-between">
+                    <div>
+                        <h3 className="font-bold text-emerald-800 text-lg">¿Tienes una idea?</h3>
+                        <p className="text-emerald-600 text-sm">Tu propuesta será revisada y publicada para votación.</p>
+                    </div>
+                    <button className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-6 rounded-xl transition-colors">
+                        Nueva Propuesta
+                    </button>
+                 </div>
+
+                 <div className="space-y-6">
+                    {proposals.map(proposal => (
+                        <ProposalCard key={proposal.id} proposal={proposal} onVote={handleVote} />
+                    ))}
+                 </div>
+            </div>
+        );
+    }
+
+    // Default or Fallback
+    return null;
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen bg-[#f9fafb] font-sans text-gray-900 pb-20 md:pb-0 flex flex-col">
       <Navigation 
         activeTab={activeTab} 
-        setActiveTab={(tab) => { setActiveTab(tab); if(tab !== 'blog') setSelectedPost(null); }} 
+        setActiveTab={setActiveTab} 
         onLoginClick={() => setIsLoginModalOpen(true)}
         isAdmin={isAdmin}
       />
       
-      <main className="flex-1 w-full pb-24 md:pb-0">
+      <main className="flex-grow">
         {renderContent()}
       </main>
 
-      <footer className="py-20 border-t border-gray-100 bg-gray-50 mt-20">
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-4 gap-12">
-          <div className="md:col-span-2 space-y-6">
-            <div className="group flex items-center gap-0">
-              <img 
-                src="https://image2url.com/r2/default/images/1770738689474-b034d35a-a99a-45db-a3e5-e8a9182845b8.png" 
-                alt="Logo Badajoz Respira" 
-                className="h-20 md:h-24 w-auto object-contain -mr-5 relative z-10"
-              />
-              <div className="font-black text-2xl tracking-tight flex items-center gap-1 relative z-20">
-                <span className="text-gray-900 transition-colors duration-300 group-hover:text-emerald-600">Badajoz</span>
-                <span className="text-emerald-600">Respira</span>
-              </div>
-            </div>
-            <p className="text-gray-400 text-sm max-w-sm leading-relaxed">Una iniciativa participativa impulsada por Farmamundi para mejorar la salud de los habitantes de Badajoz mediante la transformación del entorno urbano.</p>
-            <p className="text-gray-300 text-xs pt-4 font-bold uppercase tracking-widest">© 2024 Farmamundi • Badajoz, España</p>
-          </div>
-          <div className="space-y-4">
-            <h4 className="font-black text-gray-900 uppercase text-xs tracking-[0.2em]">Mapa del Sitio</h4>
-            <ul className="space-y-2 text-sm text-gray-500 font-medium">
-              <li><button onClick={() => setActiveTab('inicio')} className="hover:text-emerald-600">Inicio</button></li>
-              <li><button onClick={() => setActiveTab('agenda')} className="hover:text-emerald-600">Agenda</button></li>
-              <li><button onClick={() => setActiveTab('mapa')} className="hover:text-emerald-600">Mapa de Salud</button></li>
-              <li><button onClick={() => setActiveTab('blog')} className="hover:text-emerald-600">Blog</button></li>
-            </ul>
-          </div>
-          <div className="space-y-4">
-            <h4 className="font-black text-gray-900 uppercase text-xs tracking-[0.2em]">Legal</h4>
-            <ul className="space-y-2 text-sm text-gray-500 font-medium">
-              <li><a href="#" className="hover:text-emerald-600">Aviso Legal</a></li>
-              <li><a href="#" className="hover:text-emerald-600">Política de Privacidad</a></li>
-              <li><a href="#" className="hover:text-emerald-600">Cookies</a></li>
-              <li><a href="#" className="hover:text-emerald-600">Farmamundi</a></li>
-            </ul>
-          </div>
-        </div>
-      </footer>
+      <Footer setActiveTab={setActiveTab} />
 
-      {/* Auth Modal */}
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)} 
-        onLogin={handleLogin} 
+        onLogin={handleLogin}
       />
     </div>
   );
