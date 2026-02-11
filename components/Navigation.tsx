@@ -20,7 +20,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onLogi
     <>
       {/* --- DESKTOP / TABLET HEADER (Sticky Top) --- */}
       <nav className="sticky top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-100 z-50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-2">
           <div className="flex items-center justify-between">
             {/* Logo Section */}
             <div 
@@ -30,9 +30,9 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab, onLogi
               <img 
                 src="https://image2url.com/r2/default/images/1770738689474-b034d35a-a99a-45db-a3e5-e8a9182845b8.png" 
                 alt="Logo Badajoz Respira" 
-                className="h-16 md:h-24 w-auto object-contain -mr-5 relative z-10"
+                className="h-12 md:h-16 w-auto object-contain -mr-4 relative z-10"
               />
-              <div className="font-bold text-2xl tracking-tight hidden sm:flex items-center gap-1 relative z-20">
+              <div className="font-bold text-xl md:text-2xl tracking-tight hidden sm:flex items-center gap-1 relative z-20">
                 <span className="text-gray-900 transition-colors duration-300 group-hover:text-emerald-600">Badajoz</span>
                 <span className="text-emerald-600">Respira</span>
               </div>

@@ -105,28 +105,30 @@ const App: React.FC = () => {
         return (
           <div className="animate-fadeIn -mx-4 md:-mx-0">
             {/* Portada / Hero Section matching the image */}
-            <section className="relative min-h-[600px] flex items-center justify-center text-center px-4 overflow-hidden rounded-b-[40px] md:rounded-3xl shadow-2xl">
+            <section className="relative min-h-[600px] flex items-center justify-center text-center px-4 overflow-hidden shadow-2xl">
               {/* Background Image with Overlay */}
               <div className="absolute inset-0 z-0">
                 <img 
                   src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2000&auto=format&fit=crop" 
                   alt="Background" 
-                  className="w-full h-full object-cover grayscale brightness-50"
+                  className="w-full h-full object-cover brightness-90"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60"></div>
+                <div className="absolute inset-0 bg-black/30"></div>
               </div>
 
-              <div className="relative z-10 max-w-4xl space-y-8">
-                <h1 className="text-6xl md:text-8xl font-black tracking-tight text-white">
-                  Badajoz <span className="text-emerald-400">Respira</span>
-                </h1>
-                <h2 className="text-sm md:text-lg font-bold tracking-[0.2em] text-white uppercase opacity-90">
-                  Sembrando bienestar para una ciudad saludable
-                </h2>
-                <p className="text-lg md:text-2xl text-white/90 font-light max-w-3xl mx-auto leading-relaxed">
-                  Construyendo juntos una ciudad más saludable, verde y comunitaria a través de la participación ciudadana.
+              <div className="relative z-10 max-w-5xl space-y-8 flex flex-col items-center">
+                <div className="flex flex-col items-center w-full">
+                    <h1 className="text-6xl md:text-8xl font-black tracking-tight text-white leading-none">
+                    Badajoz <span className="text-emerald-400 italic">Respira</span>
+                    </h1>
+                    <h2 className="w-full text-center text-[10px] md:text-sm font-bold tracking-[0.4em] text-white uppercase opacity-95 mt-1 md:mt-0 leading-tight">
+                    Sembrando bienestar para una ciudad saludable
+                    </h2>
+                </div>
+                <p className="text-lg md:text-2xl text-white font-light max-w-3xl mx-auto leading-relaxed mt-4">
+                  Construyendo una ciudad más saludable, verde y comunitaria a través de la participación ciudadana.
                 </p>
-                <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-8">
+                <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-4">
                   <button 
                     onClick={() => setActiveTab('agenda')}
                     className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 text-white px-10 py-4 rounded-full font-bold shadow-xl transition-all transform hover:scale-105"
@@ -143,8 +145,72 @@ const App: React.FC = () => {
               </div>
             </section>
 
+            {/* Nueva Sección: ¿Qué es Badajoz Respira? */}
+            <section className="max-w-6xl mx-auto px-6 py-20">
+              <div className="text-center mb-16 space-y-4">
+                 <h2 className="text-4xl font-black text-gray-900">¿Qué es Badajoz Respira?</h2>
+                 <div className="w-16 h-1.5 bg-emerald-500 mx-auto rounded-full"></div>
+                 <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed pt-4">
+                    Una iniciativa intergeneracional de promoción para la salud y el envejecimiento activo, potenciando espacios para los cuidados y el intercambio social en las zonas verdes de la ciudad.
+                 </p>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-8">
+                 {/* Agenda Colaborativa */}
+                 <div 
+                    onClick={() => setActiveTab('agenda')}
+                    className="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all group flex flex-col items-start cursor-pointer hover:border-emerald-200"
+                 >
+                     <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-inner group-hover:bg-emerald-50 transition-colors">
+                        📅
+                     </div>
+                     <h3 className="font-bold text-xl text-gray-900 mb-4 group-hover:text-emerald-700 transition-colors">Agenda Colaborativa</h3>
+                     <p className="text-gray-500 leading-relaxed mb-6 flex-1">
+                        Actividades de ocio saludable, talleres y encuentros organizados por y para la comunidad.
+                     </p>
+                     <span className="text-emerald-600 font-bold flex items-center gap-1 group-hover:gap-2 transition-all text-sm uppercase tracking-wide">
+                        Saber más <span>›</span>
+                     </span>
+                 </div>
+
+                 {/* Mapa de Bienestar */}
+                 <div 
+                    onClick={() => setActiveTab('mapa')}
+                    className="bg-white p-10 rounded-3xl border border-emerald-100 shadow-sm hover:shadow-xl transition-all group flex flex-col items-start relative overflow-hidden cursor-pointer hover:border-emerald-300"
+                 >
+                     <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-inner relative z-10 group-hover:bg-emerald-200 transition-colors">
+                        📍
+                     </div>
+                     <h3 className="font-bold text-xl text-emerald-900 mb-4 relative z-10">Mapa de Bienestar</h3>
+                     <p className="text-gray-500 leading-relaxed mb-6 flex-1 relative z-10">
+                        Encuentra espacios verdes, centros culturales y asociaciones que fomentan el bienestar.
+                     </p>
+                     <span className="text-emerald-600 font-bold flex items-center gap-1 group-hover:gap-2 transition-all text-sm uppercase tracking-wide relative z-10">
+                        Saber más <span>›</span>
+                     </span>
+                 </div>
+
+                 {/* Participación Comunitaria */}
+                 <div 
+                    onClick={() => setActiveTab('propuestas')}
+                    className="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all group flex flex-col items-start cursor-pointer hover:border-emerald-200"
+                 >
+                     <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-inner group-hover:bg-emerald-50 transition-colors">
+                        📝
+                     </div>
+                     <h3 className="font-bold text-xl text-gray-900 mb-4 group-hover:text-emerald-700 transition-colors">Participación Comunitaria</h3>
+                     <p className="text-gray-500 leading-relaxed mb-6 flex-1">
+                        Propón tus propias actividades o recursos. Validamos y compartimos lo mejor de Badajoz.
+                     </p>
+                     <span className="text-emerald-600 font-bold flex items-center gap-1 group-hover:gap-2 transition-all text-sm uppercase tracking-wide">
+                        Saber más <span>›</span>
+                     </span>
+                 </div>
+              </div>
+            </section>
+
             {/* Additional content below hero */}
-            <div className="max-w-6xl mx-auto mt-20 px-4 space-y-20">
+            <div className="max-w-6xl mx-auto px-4 space-y-20">
               <div className="grid md:grid-cols-3 gap-12">
                 <div className="md:col-span-2 space-y-10">
                   <h2 className="text-3xl font-bold flex items-center gap-3">
