@@ -482,7 +482,7 @@ const App: React.FC = () => {
     if (activeTab === 'mapa') {
         return (
             <div className="max-w-7xl mx-auto px-4 py-6 h-[calc(100vh-100px)] flex flex-col animate-fadeIn relative">
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-4 shrink-0">
                      <h2 className="text-2xl font-black text-gray-900">Mapa de Recursos</h2>
                      <select className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm" value={selectedTag || ''} onChange={(e) => setSelectedTag(e.target.value || null)}>
                         <option value="">Todos los recursos</option>
@@ -490,13 +490,19 @@ const App: React.FC = () => {
                      </select>
                 </div>
 
-                <div className="flex-1 rounded-3xl overflow-hidden border border-gray-200 shadow-lg relative">
-                    <ResourceMap resources={filteredResources} />
+                {/* SPLIT VIEW - Mobile: Stacked, Desktop: Grid (2/3 Map, 1/3 List) */}
+                <div className="flex-1 min-h-0 flex flex-col lg:grid lg:grid-cols-3 gap-6">
+                    {/* Map Column */}
+                    <div className="lg:col-span-2 rounded-3xl overflow-hidden border border-gray-200 shadow-lg relative h-[400px] lg:h-auto shrink-0 lg:shrink">
+                        <ResourceMap resources={filteredResources} />
+                    </div>
                     
-                    {/* List overlay for desktops */}
-                    <div className="hidden md:block absolute top-4 right-4 bottom-4 w-80 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl overflow-y-auto p-4 z-[9999] border border-gray-100">
-                        <h3 className="font-bold text-gray-900 mb-4 sticky top-0 bg-white/95 backdrop-blur-md py-2 border-b">Listado ({filteredResources.length})</h3>
-                        <div className="space-y-4">
+                    {/* List Column */}
+                    <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden flex flex-col h-full min-h-0">
+                        <div className="p-4 border-b border-gray-100 bg-gray-50 shrink-0">
+                            <h3 className="font-bold text-gray-900">Listado ({filteredResources.length})</h3>
+                        </div>
+                        <div className="overflow-y-auto p-4 space-y-3 flex-1">
                             {filteredResources.map(res => (
                                 <div key={res.id} onClick={() => setSelectedResource(res)} className="p-3 rounded-xl border border-gray-100 bg-white hover:border-emerald-300 cursor-pointer transition-all shadow-sm hover:shadow-md">
                                     <div className="flex items-center justify-between mb-1">
@@ -506,6 +512,9 @@ const App: React.FC = () => {
                                     <p className="text-xs text-gray-500 truncate">{res.address}</p>
                                 </div>
                             ))}
+                            {filteredResources.length === 0 && (
+                                <p className="text-gray-500 text-sm text-center py-8">No hay recursos.</p>
+                            )}
                         </div>
                     </div>
                 </div>

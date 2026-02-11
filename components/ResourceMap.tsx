@@ -25,6 +25,11 @@ const ResourceMap: React.FC<ResourceMapProps> = ({ resources }) => {
 
       mapInstanceRef.current = map;
     }
+
+    // Invalidate size to ensure proper rendering in split views
+    setTimeout(() => {
+        mapInstanceRef.current?.invalidateSize();
+    }, 200);
   }, []);
 
   // Update Markers when resources change
@@ -81,7 +86,7 @@ const ResourceMap: React.FC<ResourceMapProps> = ({ resources }) => {
   }, [resources]);
 
   return (
-    <div className="relative w-full h-full min-h-[500px] rounded-[30px] overflow-hidden shadow-inner border border-gray-200 z-0">
+    <div className="relative w-full h-full rounded-[30px] overflow-hidden shadow-inner border border-gray-200 z-0">
        <div ref={mapContainerRef} className="w-full h-full z-0" style={{ zIndex: 0 }} />
     </div>
   );
