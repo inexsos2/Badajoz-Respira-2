@@ -48,8 +48,8 @@ export const MOCK_EVENTS: AgendaEvent[] = [
     organizer: 'Farmamundi',
     email: 'info@farmamundi.org',
     image: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=1000&auto=format&fit=crop',
-    lat: 38.884,
-    lng: -6.974
+    lat: 38.8836,
+    lng: -6.9736
   },
   {
     id: '2',
@@ -62,8 +62,8 @@ export const MOCK_EVENTS: AgendaEvent[] = [
     category: Category.Salud,
     organizer: 'Badajoz Respira',
     image: 'https://images.unsplash.com/photo-1544367563-12123d895951?q=80&w=1000&auto=format&fit=crop',
-    lat: 38.876,
-    lng: -6.972
+    lat: 38.8754,
+    lng: -6.9739
   },
   {
     id: '3',
@@ -76,8 +76,8 @@ export const MOCK_EVENTS: AgendaEvent[] = [
     category: Category.Sostenibilidad,
     organizer: 'Asociación de Productores Locales',
     image: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?q=80&w=1000&auto=format&fit=crop',
-    lat: 38.880,
-    lng: -6.969
+    lat: 38.8812,
+    lng: -6.9692
   },
   {
     id: '4',
@@ -90,8 +90,8 @@ export const MOCK_EVENTS: AgendaEvent[] = [
     category: Category.Cultura,
     organizer: 'CineClub Badajoz',
     image: 'https://images.unsplash.com/photo-1517604931442-71053e3e2c3c?q=80&w=1000&auto=format&fit=crop',
-    lat: 38.881,
-    lng: -6.968
+    lat: 38.8824,
+    lng: -6.9678
   },
   {
     id: '5',
@@ -104,8 +104,8 @@ export const MOCK_EVENTS: AgendaEvent[] = [
     category: Category.Naturaleza,
     organizer: 'Amigos de las Aves',
     image: 'https://images.unsplash.com/photo-1552728089-57bdde30ebd1?q=80&w=1000&auto=format&fit=crop',
-    lat: 38.886,
-    lng: -6.985
+    lat: 38.8885,
+    lng: -6.9855
   },
    {
     id: '6',
@@ -113,11 +113,13 @@ export const MOCK_EVENTS: AgendaEvent[] = [
     date: getDate(today.getDate() + 5),
     startTime: '17:00',
     endTime: '19:00',
-    location: 'Centro Joven',
+    location: 'Centro Joven (Paseo Fluvial)',
     description: 'Aprende a preparar recetas fáciles, rápidas y nutritivas para toda la familia.',
     category: Category.Salud,
     organizer: 'Nutricionistas Sin Fronteras',
-    image: 'https://images.unsplash.com/photo-1556910103-1c02745a30bf?q=80&w=1000&auto=format&fit=crop'
+    image: 'https://images.unsplash.com/photo-1556910103-1c02745a30bf?q=80&w=1000&auto=format&fit=crop',
+    lat: 38.8765, 
+    lng: -6.9750
   }
 ];
 
@@ -126,10 +128,10 @@ export const MOCK_RESOURCES: Resource[] = [
     id: 'r1',
     name: 'Parque del Guadiana',
     category: Category.Naturaleza,
-    address: 'Ribera del Guadiana',
+    address: 'Ribera del Guadiana (Margen Derecha)',
     description: 'Pulmón verde de la ciudad con amplias zonas para correr, caminar, parques infantiles y zonas de picnic. Ideal para desconectar del ruido urbano.',
-    lat: 38.882,
-    lng: -6.979,
+    lat: 38.8855,
+    lng: -6.9790,
     tags: ['Aire Puro', 'Running', 'Familia', 'Mascotas'],
     image: 'https://images.unsplash.com/photo-1496568589085-985bb049bb9a?q=80&w=1000&auto=format&fit=crop',
     email: 'medioambiente@badajoz.es'
@@ -140,8 +142,8 @@ export const MOCK_RESOURCES: Resource[] = [
     category: Category.Salud,
     address: 'Calle Menacho, 12',
     description: 'Servicio farmacéutico permanente en el corazón de Badajoz. Atención primaria y venta de productos de parafarmacia.',
-    lat: 38.878,
-    lng: -6.970,
+    lat: 38.8783,
+    lng: -6.9715,
     tags: ['Emergencias', 'Salud', 'Farmacia'],
     image: 'https://images.unsplash.com/photo-1585435557343-3b092031a831?q=80&w=1000&auto=format&fit=crop',
     phone: '924 22 33 44'
@@ -152,8 +154,8 @@ export const MOCK_RESOURCES: Resource[] = [
     category: Category.Sostenibilidad,
     address: 'Calle Antonio Hernández Gil',
     description: 'Espacio comunitario de cultivo ecológico y aprendizaje. Los vecinos gestionan sus parcelas fomentando la soberanía alimentaria.',
-    lat: 38.865,
-    lng: -6.955,
+    lat: 38.8615,
+    lng: -6.9585,
     tags: ['Naturaleza', 'Comunidad', 'Huerto'],
     image: 'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=1000&auto=format&fit=crop'
   },
@@ -163,8 +165,8 @@ export const MOCK_RESOURCES: Resource[] = [
     category: Category.Deporte,
     address: 'Av. del Perú',
     description: 'Instalaciones completas para natación, tenis, atletismo y fútbol. Cuenta con piscina olímpica y gimnasio municipal.',
-    lat: 38.868,
-    lng: -6.995,
+    lat: 38.8640,
+    lng: -7.0065,
     tags: ['Deporte', 'Salud', 'Piscina'],
     image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000&auto=format&fit=crop'
   },
@@ -174,8 +176,8 @@ export const MOCK_RESOURCES: Resource[] = [
     category: Category.Sostenibilidad,
     address: 'Polígono Ind. El Nevero',
     description: 'Centro de recogida selectiva de residuos domésticos que no deben tirarse a los contenedores habituales (pilas, aceites, electrodomésticos).',
-    lat: 38.895,
-    lng: -6.990,
+    lat: 38.9025,
+    lng: -6.9920,
     tags: ['Sostenibilidad', 'Reciclaje', 'Residuos'],
     image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?q=80&w=1000&auto=format&fit=crop'
   },
@@ -185,8 +187,8 @@ export const MOCK_RESOURCES: Resource[] = [
     category: Category.Cultura,
     address: 'Av. de Europa, 2',
     description: 'Gran espacio de lectura, estudio y actividades culturales. Acceso gratuito a internet y préstamo de libros.',
-    lat: 38.875,
-    lng: -6.980,
+    lat: 38.8735,
+    lng: -6.9778,
     tags: ['Cultura', 'Libros', 'Estudio'],
     image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=1000&auto=format&fit=crop'
   },
@@ -196,8 +198,8 @@ export const MOCK_RESOURCES: Resource[] = [
     category: Category.Salud,
     address: 'Calle Sinforiano Madroñero',
     description: 'Atención primaria, pediatría y enfermería. Cita previa necesaria.',
-    lat: 38.870,
-    lng: -6.985,
+    lat: 38.8692,
+    lng: -6.9868,
     tags: ['Salud', 'Médico', 'Público'],
     image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1000&auto=format&fit=crop'
   }

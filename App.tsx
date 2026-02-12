@@ -481,7 +481,7 @@ const App: React.FC = () => {
 
     if (activeTab === 'mapa') {
         return (
-            <div className="max-w-7xl mx-auto px-4 py-6 h-[calc(100vh-100px)] flex flex-col animate-fadeIn relative">
+            <div className="max-w-7xl mx-auto px-4 py-6 lg:h-[calc(100vh-100px)] flex flex-col animate-fadeIn relative">
                 <div className="flex justify-between items-center mb-4 shrink-0">
                      <h2 className="text-2xl font-black text-gray-900">Mapa de Recursos</h2>
                      <select className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm" value={selectedTag || ''} onChange={(e) => setSelectedTag(e.target.value || null)}>
@@ -497,8 +497,8 @@ const App: React.FC = () => {
                         <ResourceMap resources={filteredResources} />
                     </div>
                     
-                    {/* List Column */}
-                    <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden flex flex-col h-full min-h-0">
+                    {/* List Column - Added h-[500px] for mobile visibility */}
+                    <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden flex flex-col h-[500px] lg:h-full min-h-0">
                         <div className="p-4 border-b border-gray-100 bg-gray-50 shrink-0">
                             <h3 className="font-bold text-gray-900">Listado ({filteredResources.length})</h3>
                         </div>
@@ -575,6 +575,257 @@ const App: React.FC = () => {
                  )}
             </div>
         );
+    }
+
+    if (activeTab === 'propuestas') {
+      return (
+        <div className="max-w-4xl mx-auto px-4 py-10 animate-fadeIn min-h-screen">
+          
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-gray-900 mb-4 flex items-center justify-center gap-3">
+              <span className="text-emerald-500">📢</span> Participación Ciudadana
+            </h2>
+            <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+              Badajoz Respira lo construimos entre todos. Propón actividades saludables o nuevos recursos para el mapa.
+            </p>
+          </div>
+
+          {/* Selection Mode */}
+          {proposalMode === 'none' && (
+            <div className="space-y-12">
+              <div className="grid md:grid-cols-2 gap-6">
+                <button 
+                  onClick={() => setProposalMode('event')}
+                  className="group bg-white p-8 rounded-3xl border-2 border-dashed border-gray-200 hover:border-emerald-400 hover:bg-emerald-50 transition-all text-left flex flex-col gap-4 shadow-sm hover:shadow-lg"
+                >
+                  <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">📅</div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-emerald-700">Proponer Actividad</h3>
+                    <p className="text-gray-500 text-sm mt-1">Organiza una caminata, un taller o un evento deportivo.</p>
+                  </div>
+                </button>
+
+                <button 
+                  onClick={() => setProposalMode('resource')}
+                  className="group bg-white p-8 rounded-3xl border-2 border-dashed border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-all text-left flex flex-col gap-4 shadow-sm hover:shadow-lg"
+                >
+                  <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">📍</div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-700">Proponer Recurso</h3>
+                    <p className="text-gray-500 text-sm mt-1">Sugiere un parque, una fuente o un espacio saludable.</p>
+                  </div>
+                </button>
+              </div>
+
+              {/* Proposals List */}
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  Propuestas de la Comunidad <span className="text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded-full">{proposals.length}</span>
+                </h3>
+                <div className="grid gap-6">
+                  {proposals.map(proposal => (
+                    <ProposalCard key={proposal.id} proposal={proposal} onVote={handleVote} />
+                  ))}
+                  {proposals.length === 0 && (
+                    <div className="text-center py-12 bg-white rounded-3xl border border-gray-100">
+                      <p className="text-gray-400">Aún no hay propuestas. ¡Sé el primero!</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Event Form */}
+          {proposalMode === 'event' && (
+            <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 animate-fadeIn">
+              <button onClick={() => setProposalMode('none')} className="mb-6 text-gray-500 hover:text-gray-900 font-bold flex items-center gap-2">
+                ← Volver
+              </button>
+              <h3 className="text-2xl font-black mb-6 text-gray-900">Nueva Actividad</h3>
+              
+              <form onSubmit={handleSubmitEvent} className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Título de la actividad</label>
+                    <input className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3" value={eventProposal.title} onChange={e => setEventProposal({...eventProposal, title: e.target.value})} placeholder="Ej: Clase de Yoga en el parque" />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Fecha</label>
+                      <input type="date" className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3" value={eventProposal.date} onChange={e => setEventProposal({...eventProposal, date: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Hora Inicio</label>
+                      <input type="time" className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3" value={eventProposal.startTime} onChange={e => setEventProposal({...eventProposal, startTime: e.target.value})} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Categoría</label>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.values(Category).map(cat => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => setEventProposal({...eventProposal, category: cat})}
+                          className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors border ${
+                            eventProposal.category === cat 
+                              ? 'bg-gray-900 text-white border-gray-900' 
+                              : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Ubicación (Dirección aproximada)</label>
+                     <div className="flex gap-2">
+                        <input 
+                            className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3" 
+                            value={eventProposal.location} 
+                            onChange={e => setEventProposal({...eventProposal, location: e.target.value})} 
+                            placeholder="Ej: Parque de Castelar" 
+                        />
+                        <button 
+                            type="button" 
+                            onClick={() => handleSearchAddress('event')}
+                            className="bg-emerald-100 text-emerald-700 px-4 rounded-xl font-bold hover:bg-emerald-200 transition-colors"
+                            disabled={isGeocoding}
+                        >
+                            {isGeocoding ? '...' : '🔍 Ubicar'}
+                        </button>
+                     </div>
+                  </div>
+
+                  <div>
+                      <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Marca el punto exacto en el mapa</label>
+                      <LocationPicker 
+                        lat={eventProposal.lat} 
+                        lng={eventProposal.lng} 
+                        onLocationSelect={(lat, lng) => setEventProposal(prev => ({ ...prev, lat, lng }))}
+                        category={eventProposal.category}
+                      />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Descripción</label>
+                    <textarea className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3" rows={4} value={eventProposal.description} onChange={e => setEventProposal({...eventProposal, description: e.target.value})} placeholder="Describe en qué consiste la actividad..." />
+                  </div>
+
+                   <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Imagen (Opcional)</label>
+                    <input type="file" onChange={(e) => handleFileUpload(e, 'event')} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"/>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                     <div>
+                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Organizador</label>
+                        <input className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3" value={eventProposal.organizer} onChange={e => setEventProposal({...eventProposal, organizer: e.target.value})} placeholder="Tu nombre o asociación" />
+                     </div>
+                     <div>
+                        <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Email contacto</label>
+                        <input type="email" className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3" value={eventProposal.email} onChange={e => setEventProposal({...eventProposal, email: e.target.value})} placeholder="Opcional" />
+                     </div>
+                  </div>
+                </div>
+
+                <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all">
+                  Enviar Propuesta
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Resource Form */}
+          {proposalMode === 'resource' && (
+            <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 animate-fadeIn">
+              <button onClick={() => setProposalMode('none')} className="mb-6 text-gray-500 hover:text-gray-900 font-bold flex items-center gap-2">
+                ← Volver
+              </button>
+              <h3 className="text-2xl font-black mb-6 text-gray-900">Nuevo Recurso</h3>
+              
+              <form onSubmit={handleSubmitResource} className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nombre del Lugar / Recurso</label>
+                    <input className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3" value={resourceProposal.name} onChange={e => setResourceProposal({...resourceProposal, name: e.target.value})} placeholder="Ej: Fuente de agua potable" />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Categoría</label>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.values(Category).map(cat => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => setResourceProposal({...resourceProposal, category: cat})}
+                          className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors border ${
+                            resourceProposal.category === cat 
+                              ? 'bg-gray-900 text-white border-gray-900' 
+                              : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                   <div>
+                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Dirección</label>
+                     <div className="flex gap-2">
+                        <input 
+                            className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3" 
+                            value={resourceProposal.address} 
+                            onChange={e => setResourceProposal({...resourceProposal, address: e.target.value})} 
+                            placeholder="Ej: Calle Menacho 12" 
+                        />
+                        <button 
+                            type="button" 
+                            onClick={() => handleSearchAddress('resource')}
+                            className="bg-emerald-100 text-emerald-700 px-4 rounded-xl font-bold hover:bg-emerald-200 transition-colors"
+                            disabled={isGeocoding}
+                        >
+                            {isGeocoding ? '...' : '🔍 Ubicar'}
+                        </button>
+                     </div>
+                  </div>
+
+                  <div>
+                      <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Marca el punto exacto en el mapa</label>
+                      <LocationPicker 
+                        lat={resourceProposal.lat} 
+                        lng={resourceProposal.lng} 
+                        onLocationSelect={(lat, lng) => setResourceProposal(prev => ({ ...prev, lat, lng }))}
+                        category={resourceProposal.category}
+                      />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Descripción</label>
+                    <textarea className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3" rows={4} value={resourceProposal.description} onChange={e => setResourceProposal({...resourceProposal, description: e.target.value})} placeholder="¿Por qué es importante este recurso?" />
+                  </div>
+
+                   <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Imagen (Opcional)</label>
+                    <input type="file" onChange={(e) => handleFileUpload(e, 'resource')} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"/>
+                  </div>
+                </div>
+
+                <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all">
+                  Enviar Recurso
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
+      );
     }
 
     return null;
